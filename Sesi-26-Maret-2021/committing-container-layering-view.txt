@@ -1,0 +1,236 @@
+Exploring Docker Image Layers and Committing Container for Creating a New Image
+
+
+1. Before Installing Docker
+
+# rpm -qa|grep docker
+
+# docker
+bash: docker: command not found...
+
+# cd /var/lib/docker
+-bash: cd: /var/lib/docker: No such file or directory
+
+2. After Installing Docker Software but Docker Service was not yet started
+
+$ docker version
+...
+ Version:           19.03.8
+...
+
+# cd /var/lib/docker
+# ls
+
+3. After Starting Docker Service but before pulling httpd Image
+
+# cd /var/lib/docker
+
+# ls
+containers  image  network  overlay2  plugins  swarm  tmp  trust  volumes
+
+# locate index.html|grep docker
+
+
+4. After Pulling httpd Image
+
+# docker image ls
+REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
+docker.io/httpd     latest              bdc169d27d36        11 days ago         166 MB
+docker.io/centos    latest              470671670cac        3 months ago        237 MB
+
+# docker container ls -a
+CONTAINER ID        IMAGE               COMMAND             CREATED             STATUS              PORTS               NAMES
+# 
+
+# yum install mlocate
+
+# locate index.html|grep docker
+/var/lib/docker/overlay2/2de088e9.../diff/usr/local/apache2/htdocs/index.html
+
+# cat 
+<html><body><h1>It works!</h1></body></html>
+
+
+5. After Starting the httpd Container
+
+# docker run -d --name myhttpd -p 8080:80 httpd
+244860423e0a835cd1ef1910ea240b2caa23e3e2bff8ab1d4c965674fa08e21b
+
+# docker container ls
+CONTAINER ID        IMAGE               COMMAND              CREATED             STATUS              PORTS                  NAMES
+244860423e0a        httpd               "httpd-foreground"   14 seconds ago      Up 13 seconds       0.0.0.0:8080->80/tcp   myhttpd
+
+
+
+# updatedb
+
+# curl http://localhost:8080
+<html><body><h1>It works!</h1></body></html>
+
+# locate index.html|grep docker
+/var/lib/docker/overlay2/2de088e9.../diff/usr/local/apache2/htdocs/index.html
+/var/lib/docker/overlay2/b9c65fdc.../merged/usr/local/apache2/htdocs/index.html
+
+# cat /var/lib/docker/overlay2/2de088e9.../diff/usr/local/apache2/htdocs/index.html
+<html><body><h1>It works!</h1></body></html>
+
+# cat /var/lib/docker/overlay2/b9c65fdc.../merged/usr/local/apache2/htdocs/index.html
+<html><body><h1>It works!</h1></body></html>
+
+
+6. After Updating the httpd Container
+
+# docker exec -it myhttpd /bin/bash
+root@244860423e0a:/usr/local/apache2# cd htdocs/
+
+root@244860423e0a:/usr/local/apache2/htdocs# ls
+index.html
+
+root@244860423e0a:/usr/local/apache2/htdocs# cat index.html 
+<html><body><h1>It works!</h1></body></html>
+
+root@244860423e0a:/usr/local/apache2/htdocs# echo "hello world" > index.html
+
+root@244860423e0a:/usr/local/apache2/htdocs# cat index.html 
+hello world
+
+root@244860423e0a:/usr/local/apache2/htdocs# exit
+exit
+
+# updatedb
+
+# curl http://localhost:8080
+hello world
+
+# locate index.html|grep docker
+
+/var/lib/docker/overlay2/2de088e9.../diff/usr/local/apache2/htdocs/index.html
+/var/lib/docker/overlay2/b9c65fdc.../diff/usr/local/apache2/htdocs/index.html
+/var/lib/docker/overlay2/b9c65fdc.../merged/usr/local/apache2/htdocs/index.html
+
+# cat /var/lib/docker/overlay2/2de088e9.../diff/usr/local/apache2/htdocs/index.html
+<html><body><h1>It works!</h1></body></html>
+
+# cat /var/lib/docker/overlay2/b9c65fdc.../diff/usr/local/apache2/htdocs/index.html
+hello world
+
+# cat /var/lib/docker/overlay2/b9c65fdc.../merged/usr/local/apache2/htdocs/index.html
+hello world
+
+
+7. After Stopping the httpd Container
+
+# docker container ls
+CONTAINER ID        IMAGE               COMMAND              CREATED             STATUS              PORTS                  NAMES
+244860423e0a        httpd               "httpd-foreground"   11 minutes ago      Up 11 minutes       0.0.0.0:8080->80/tcp   myhttpd
+
+# docker stop myhttpd
+myhttpd
+
+# docker container ls -a
+CONTAINER ID        IMAGE               COMMAND              CREATED             STATUS                     PORTS               NAMES
+244860423e0a        httpd               "httpd-foreground"   11 minutes ago      Exited (0) 5 seconds ago                       myhttpd
+
+# updatedb
+
+# curl http://localhost:8080
+curl: (7) Failed connect to localhost:8080; Connection refused
+
+# locate index.html|grep docker
+/var/lib/docker/overlay2/2de088e9.../diff/usr/local/apache2/htdocs/index.html
+/var/lib/docker/overlay2/b9c65fdc.../diff/usr/local/apache2/htdocs/index.html
+
+# cat /var/lib/docker/overlay2/2de088e9.../diff/usr/local/apache2/htdocs/index.html
+<html><body><h1>It works!</h1></body></html>
+
+# cat /var/lib/docker/overlay2/b9c65fdc.../diff/usr/local/apache2/htdocs/index.html
+hello world
+
+
+
+5. After Committing the httpd Container to Create a New Image
+
+# docker container ls -a
+CONTAINER ID        IMAGE               COMMAND              CREATED             STATUS                     PORTS               NAMES
+244860423e0a        httpd               "httpd-foreground"   15 minutes ago      Exited (0) 3 minutes ago                       myhttpd
+
+# docker image ls
+REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
+docker.io/httpd     latest              bdc169d27d36        11 days ago         166 MB
+docker.io/centos    latest              470671670cac        3 months ago        237 MB
+
+# docker diff myhttpd
+C /root
+A /root/.bash_history
+C /run
+D /run/secrets
+C /usr/local
+C /usr/local/apache2
+C /usr/local/apache2/htdocs/index.html
+C /usr/local/apache2/logs
+
+# docker commit myhttpd docker.io/httpd-modified
+sha256:551df82cb2b705f361685618804bfe2e642252b34dfae09c8efd9e0be110db97
+
+# docker image ls
+REPOSITORY                 TAG                 IMAGE ID            CREATED             SIZE
+docker.io/httpd-modified   latest              551df82cb2b7        6 seconds ago       166 MB
+docker.io/httpd            latest              bdc169d27d36        11 days ago         166 MB
+docker.io/centos           latest              470671670cac        3 months ago        237 MB
+
+# updatedb
+
+# locate index.html|grep docker
+/var/lib/docker/overlay2/2de088e9.../diff/usr/local/apache2/htdocs/index.html
+/var/lib/docker/overlay2/b9c65fdc.../diff/usr/local/apache2/htdocs/index.html
+/var/lib/docker/overlay2/d14f65fc.../diff/usr/local/apache2/htdocs/index.html
+
+# cat /var/lib/docker/overlay2/2de088e9.../diff/usr/local/apache2/htdocs/index.html
+<html><body><h1>It works!</h1></body></html>
+
+# cat /var/lib/docker/overlay2/b9c65fdc.../diff/usr/local/apache2/htdocs/index.html
+hello world
+
+# cat /var/lib/docker/overlay2/d14f65fc.../diff/usr/local/apache2/htdocs/index.html
+hello world
+
+6. Inspecting Layers and Cache ID Directories of both Images
+
+# docker image inspect httpd|grep -A 8 Layers
+            "Layers": [
+                "sha256:b60e5c3bcef2f42ec42648b3acf7baf6de1fa780ca16d9180f3b4a3f266fe7bc",
+                "sha256:1a935e59aa8a63b5ab0abdabbdf00b6fefe5eb6b9b1b6610b0e5c0ba4a3df310",
+                "sha256:e728c649bc9114be502565b4ea9e8c593029e5a256cee50d2d79a629b65b47c5",
+                "sha256:4621e8a6d1da68c51ad84914875278f76f95a9cdfa74c7d2e309d84ee6805a3a",
+                "sha256:9dabb51b1ca2e523a064185e053f866fd0650074fa0c72a979bf1ea047bd88b8"
+            ]
+        }
+    }
+
+# docker image inspect httpd-modified|grep -A 8 Layers
+            "Layers": [
+                "sha256:b60e5c3bcef2f42ec42648b3acf7baf6de1fa780ca16d9180f3b4a3f266fe7bc",
+                "sha256:1a935e59aa8a63b5ab0abdabbdf00b6fefe5eb6b9b1b6610b0e5c0ba4a3df310",
+                "sha256:e728c649bc9114be502565b4ea9e8c593029e5a256cee50d2d79a629b65b47c5",
+                "sha256:4621e8a6d1da68c51ad84914875278f76f95a9cdfa74c7d2e309d84ee6805a3a",
+                "sha256:9dabb51b1ca2e523a064185e053f866fd0650074fa0c72a979bf1ea047bd88b8",
+                "sha256:e2e2a493d0a3ee606861f8be4cd3f16e8d96ddaa3a9e08cfe2b504bf1b38d889"
+            ]
+        }
+
+# docker image inspect httpd|grep -A 5 Data
+            "Data": {
+                "LowerDir": "/var/lib/docker/overlay2/2de088e9fd32097b7d747d1b009ff596fc79b95b26c4fc1a91701e237ec1e9c8/diff:/var/lib/docker/overlay2/15300136bcdc82078d713aacff143fae777916ad79d5ca679aac1b77ddeff8c0/diff:/var/lib/docker/overlay2/9da27fa48151c6558e4431dc60695bdcd76cd75da9f77430df003fc5a413f491/diff:/var/lib/docker/overlay2/dbdf674988fb9858e3b84acaf9f244f4c59d1a9a80261a6592e88544780b5398/diff",
+                "MergedDir": "/var/lib/docker/overlay2/dc4cc2105efa0790fa6d4de03ea8b177caab79de940d250b670ae65107899d99/merged",
+                "UpperDir": "/var/lib/docker/overlay2/dc4cc2105efa0790fa6d4de03ea8b177caab79de940d250b670ae65107899d99/diff",
+                "WorkDir": "/var/lib/docker/overlay2/dc4cc2105efa0790fa6d4de03ea8b177caab79de940d250b670ae65107899d99/work"
+            }
+
+# docker image inspect httpd-modified|grep -A 5 Data
+            "Data": {
+                "LowerDir": "/var/lib/docker/overlay2/dc4cc2105efa0790fa6d4de03ea8b177caab79de940d250b670ae65107899d99/diff:/var/lib/docker/overlay2/2de088e9fd32097b7d747d1b009ff596fc79b95b26c4fc1a91701e237ec1e9c8/diff:/var/lib/docker/overlay2/15300136bcdc82078d713aacff143fae777916ad79d5ca679aac1b77ddeff8c0/diff:/var/lib/docker/overlay2/9da27fa48151c6558e4431dc60695bdcd76cd75da9f77430df003fc5a413f491/diff:/var/lib/docker/overlay2/dbdf674988fb9858e3b84acaf9f244f4c59d1a9a80261a6592e88544780b5398/diff",
+                "MergedDir": "/var/lib/docker/overlay2/d14f65fc4ac9a19973b5f1dc461e538c73a77c370c27c7d19964161bb327bd5d/merged",
+                "UpperDir": "/var/lib/docker/overlay2/d14f65fc4ac9a19973b5f1dc461e538c73a77c370c27c7d19964161bb327bd5d/diff",
+                "WorkDir": "/var/lib/docker/overlay2/d14f65fc4ac9a19973b5f1dc461e538c73a77c370c27c7d19964161bb327bd5d/work"
+            }
+

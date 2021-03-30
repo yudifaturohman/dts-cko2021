@@ -1,0 +1,473 @@
+# uname -n
+node1
+
+# hostnamectl
+   Static hostname: node1
+         Icon name: computer-vm
+           Chassis: vm
+        Machine ID: c87fdaeda054482fbb7c700d607bb943
+           Boot ID: 2604cd9e23f542c4bd436535a042b454
+    Virtualization: kvm
+  Operating System: Red Hat Enterprise Linux Server 7.8 (Maipo)
+       CPE OS Name: cpe:/o:redhat:enterprise_linux:7.8:GA:server
+            Kernel: Linux 3.10.0-1127.el7.x86_64
+      Architecture: x86-64
+
+# ip l
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN mode DEFAULT group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+2: eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UP mode DEFAULT group default qlen 1000
+    link/ether 52:54:00:8b:60:7f brd ff:ff:ff:ff:ff:ff
+3: docker0: <NO-CARRIER,BROADCAST,MULTICAST,UP> mtu 1500 qdisc noqueue state DOWN mode DEFAULT group default 
+    link/ether 02:42:cd:0c:c1:d6 brd ff:ff:ff:ff:ff:ff
+
+# ip a
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    inet 127.0.0.1/8 scope host lo
+       valid_lft forever preferred_lft forever
+    inet6 ::1/128 scope host 
+       valid_lft forever preferred_lft forever
+2: eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UP group default qlen 1000
+    link/ether 52:54:00:8b:60:7f brd ff:ff:ff:ff:ff:ff
+    inet 10.10.50.101/24 brd 10.10.50.255 scope global noprefixroute eth0
+       valid_lft forever preferred_lft forever
+    inet6 fe80::44cb:72bc:5bf6:cecb/64 scope link tentative noprefixroute dadfailed 
+       valid_lft forever preferred_lft forever
+    inet6 fe80::fb69:18bd:38b1:ef43/64 scope link noprefixroute 
+       valid_lft forever preferred_lft forever
+3: docker0: <NO-CARRIER,BROADCAST,MULTICAST,UP> mtu 1500 qdisc noqueue state DOWN group default 
+    link/ether 02:42:cd:0c:c1:d6 brd ff:ff:ff:ff:ff:ff
+    inet 172.17.0.1/16 scope global docker0
+       valid_lft forever preferred_lft forever
+    inet6 fe80::42:cdff:fe0c:c1d6/64 scope link 
+       valid_lft forever preferred_lft forever
+# ip r
+default via 10.10.50.1 dev eth0 proto static metric 100 
+10.10.50.0/24 dev eth0 proto kernel scope link src 10.10.50.101 metric 100 
+172.17.0.0/16 dev docker0 proto kernel scope link src 172.17.0.1 
+
+# nmcli connection show
+NAME  UUID                                  TYPE      DEVICE 
+eth0  b02d7eb7-b07f-48b6-88d3-b0d923e5f290  ethernet  eth0   
+
+# cd /etc/sysconfig/network-scripts/
+
+# ls
+ifcfg-eth0  ifdown-Team      ifdown-eth   ifdown-isdn  ifdown-routes  ifup           ifup-aliases  ifup-ippp  ifup-plip   ifup-ppp     ifup-tunnel       network-functions
+ifcfg-lo    ifdown-TeamPort  ifdown-ippp  ifdown-post  ifdown-sit     ifup-Team      ifup-bnep     ifup-ipv6  ifup-plusb  ifup-routes  ifup-wireless     network-functions-ipv6
+ifdown      ifdown-bnep      ifdown-ipv6  ifdown-ppp   ifdown-tunnel  ifup-TeamPort  ifup-eth      ifup-isdn  ifup-post   ifup-sit     init.ipv6-global
+
+# more ifcfg-eth0 
+TYPE=Ethernet
+PROXY_METHOD=none
+BROWSER_ONLY=no
+BOOTPROTO=none
+DEFROUTE=yes
+IPV4_FAILURE_FATAL=no
+IPV6INIT=yes
+IPV6_AUTOCONF=yes
+IPV6_DEFROUTE=yes
+IPV6_FAILURE_FATAL=no
+IPV6_ADDR_GEN_MODE=stable-privacy
+NAME=eth0
+UUID=b02d7eb7-b07f-48b6-88d3-b0d923e5f290
+DEVICE=eth0
+ONBOOT=yes
+IPADDR=10.10.50.101
+PREFIX=24
+GATEWAY=10.10.50.1
+DNS1=8.8.8.8
+DNS2=8.8.4.4
+# 
+
+# brctl
+-bash: brctl: command not found
+# yum provides brctl
+Failed to set locale, defaulting to C
+Loaded plugins: product-id, search-disabled-repos, subscription-manager
+
+This system is not registered with an entitlement server. You can use subscription-manager to register.
+
+bridge-utils-1.5-9.el7.x86_64 : Utilities for configuring the linux ethernet bridge
+Repo        : rhel-7-server-rpms
+Matched from:
+Filename    : /usr/sbin/brctl
+
+
+
+# yum install bridge-utils
+Failed to set locale, defaulting to C
+Loaded plugins: product-id, search-disabled-repos, subscription-manager
+
+This system is not registered with an entitlement server. You can use subscription-manager to register.
+
+rhel-7-fast-datapath-rpms                                                                                                                                                   | 3.6 kB  00:00:00     
+rhel-7-server-ansible-2.4-rpms                                                                                                                                              | 3.6 kB  00:00:00     
+rhel-7-server-extras-rpms                                                                                                                                                   | 3.6 kB  00:00:00     
+rhel-7-server-optional-rpms                                                                                                                                                 | 3.6 kB  00:00:00     
+rhel-7-server-ose-3.9-rpms                                                                                                                                                  | 3.6 kB  00:00:00     
+rhel-7-server-rpms                                                                                                                                                          | 3.6 kB  00:00:00     
+Resolving Dependencies
+--> Running transaction check
+---> Package bridge-utils.x86_64 0:1.5-9.el7 will be installed
+--> Finished Dependency Resolution
+
+Dependencies Resolved
+
+===================================================================================================================================================================================================
+ Package                                        Arch                                     Version                                        Repository                                            Size
+===================================================================================================================================================================================================
+Installing:
+ bridge-utils                                   x86_64                                   1.5-9.el7                                      rhel-7-server-rpms                                    32 k
+
+Transaction Summary
+===================================================================================================================================================================================================
+Install  1 Package
+
+Total download size: 32 k
+Installed size: 56 k
+Is this ok [y/d/N]: y
+Downloading packages:
+bridge-utils-1.5-9.el7.x86_64.rpm                                                                                                                                           |  32 kB  00:00:00     
+Running transaction check
+Running transaction test
+Transaction test succeeded
+Running transaction
+  Installing : bridge-utils-1.5-9.el7.x86_64                                                                                                                                                   1/1 
+  Verifying  : bridge-utils-1.5-9.el7.x86_64                                                                                                                                                   1/1 
+
+Installed:
+  bridge-utils.x86_64 0:1.5-9.el7                                                                                                                                                                  
+
+Complete!
+# brctl show
+bridge name	bridge id		STP enabled	interfaces
+docker0		8000.0242cd0cc1d6	no		
+# 
+
+
+=============== Network=none ==========
+
+# docker image ls
+REPOSITORY              TAG                 IMAGE ID            CREATED             SIZE
+docker.io/mariadb       latest              ec404c76b4a0        5 days ago          400 MB
+docker.io/ubuntu        latest              74435f89ab78        5 days ago          73.9 MB
+docker.io/centos        latest              831691599b88        5 days ago          215 MB
+docker.io/httpd         latest              ccbcea8a6757        12 days ago         166 MB
+docker.io/hello-world   latest              bf756fb1ae65        5 months ago        13.3 kB
+
+# docker network ls
+NETWORK ID          NAME                DRIVER              SCOPE
+0029b1eaaa4f        bridge              bridge              local
+27c066505a7e        host                host                local
+b4d9dec942c9        none                null                local
+
+# docker container run -it --name mycentos --network=none centos /bin/bash
+[root@0d42c747d730 /]# ip l
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN mode DEFAULT group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+[root@0d42c747d730 /]# ip a
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    inet 127.0.0.1/8 scope host lo
+       valid_lft forever preferred_lft forever
+    inet6 ::1/128 scope host 
+       valid_lft forever preferred_lft forever
+
+[root@0d42c747d730 /]# ip r
+
+[root@0d42c747d730 /]# nmcli connection show
+bash: nmcli: command not found
+
+[root@0d42c747d730 /]# ifconfig
+bash: ifconfig: command not found
+
+[root@0d42c747d730 /]# cd /etc/sysconfig/network-scripts/
+
+[root@0d42c747d730 network-scripts]# ls
+ifcfg-ens3
+
+[root@0d42c747d730 network-scripts]# cat ifcfg-ens3 
+# Generated by dracut initrd
+NAME="ens3"
+DEVICE="ens3"
+ONBOOT="yes"
+NETBOOT="yes"
+UUID="5606255b-15a9-4348-a575-2c6689eefeeb"
+IPV6INIT="yes"
+BOOTPROTO="dhcp"
+TYPE="Ethernet"
+PROXY_METHOD="none"
+BROWSER_ONLY="no"
+DEFROUTE="yes"
+IPV4_FAILURE_FATAL="no"
+IPV6_AUTOCONF="yes"
+IPV6_DEFROUTE="yes"
+IPV6_FAILURE_FATAL="no"
+
+[root@0d42c747d730 ~]# systemctl
+System has not been booted with systemd as init system (PID 1). Can't operate.
+Failed to connect to bus: Host is down
+
+
+========== Viewing Network Configuration from Physical Host
+
+# docker container ls
+CONTAINER ID        IMAGE               COMMAND             CREATED             STATUS              PORTS               NAMES
+0d42c747d730        centos              "/bin/bash"         5 minutes ago       Up 5 minutes                            mycentos
+
+# docker container inspect mycentos
+[
+    {
+        "Id": "0d42c747d7308b25ba53ae3bd5890f75fa33f50585b734221c88d6c8dec72b4d",
+        "Created": "2020-06-22T05:37:20.119481731Z",
+        "Path": "/bin/bash",
+        "Args": [],
+        "State": {
+            "Status": "running",
+            "Running": true,
+            "Paused": false,
+            "Restarting": false,
+            "OOMKilled": false,
+            "Dead": false,
+            "Pid": 15868,
+            "ExitCode": 0,
+            "Error": "",
+            "StartedAt": "2020-06-22T05:37:20.408757559Z",
+            "FinishedAt": "0001-01-01T00:00:00Z"
+        },
+        "Image": "sha256:831691599b88ad6cc2a4abbd0e89661a121aff14cfa289ad840fd3946f274f1f",
+        "ResolvConfPath": "/var/lib/docker/containers/0d42c747d7308b25ba53ae3bd5890f75fa33f50585b734221c88d6c8dec72b4d/resolv.conf",
+        "HostnamePath": "/var/lib/docker/containers/0d42c747d7308b25ba53ae3bd5890f75fa33f50585b734221c88d6c8dec72b4d/hostname",
+        "HostsPath": "/var/lib/docker/containers/0d42c747d7308b25ba53ae3bd5890f75fa33f50585b734221c88d6c8dec72b4d/hosts",
+        "LogPath": "",
+        "Name": "/mycentos",
+        "RestartCount": 0,
+        "Driver": "overlay2",
+        "MountLabel": "system_u:object_r:svirt_sandbox_file_t:s0:c444,c495",
+        "ProcessLabel": "system_u:system_r:svirt_lxc_net_t:s0:c444,c495",
+        "AppArmorProfile": "",
+        "ExecIDs": null,
+        "HostConfig": {
+            "Binds": null,
+            "ContainerIDFile": "",
+            "LogConfig": {
+                "Type": "journald",
+                "Config": {}
+            },
+            "NetworkMode": "none",
+            "PortBindings": {},
+            "RestartPolicy": {
+                "Name": "no",
+                "MaximumRetryCount": 0
+            },
+            "AutoRemove": false,
+            "VolumeDriver": "",
+            "VolumesFrom": null,
+            "CapAdd": null,
+            "CapDrop": null,
+            "Dns": [],
+            "DnsOptions": [],
+            "DnsSearch": [],
+            "ExtraHosts": null,
+            "GroupAdd": null,
+            "IpcMode": "",
+            "Cgroup": "",
+            "Links": null,
+            "OomScoreAdj": 0,
+            "PidMode": "",
+            "Privileged": false,
+            "PublishAllPorts": false,
+            "ReadonlyRootfs": false,
+            "SecurityOpt": null,
+            "UTSMode": "",
+            "UsernsMode": "",
+            "ShmSize": 67108864,
+            "Runtime": "docker-runc",
+            "ConsoleSize": [
+                0,
+                0
+            ],
+            "Isolation": "",
+            "CpuShares": 0,
+            "Memory": 0,
+            "NanoCpus": 0,
+            "CgroupParent": "",
+            "BlkioWeight": 0,
+            "BlkioWeightDevice": null,
+            "BlkioDeviceReadBps": null,
+            "BlkioDeviceWriteBps": null,
+            "BlkioDeviceReadIOps": null,
+            "BlkioDeviceWriteIOps": null,
+            "CpuPeriod": 0,
+            "CpuQuota": 0,
+            "CpuRealtimePeriod": 0,
+            "CpuRealtimeRuntime": 0,
+            "CpusetCpus": "",
+            "CpusetMems": "",
+            "Devices": [],
+            "DiskQuota": 0,
+            "KernelMemory": 0,
+            "MemoryReservation": 0,
+            "MemorySwap": 0,
+            "MemorySwappiness": -1,
+            "OomKillDisable": false,
+            "PidsLimit": 0,
+            "Ulimits": null,
+            "CpuCount": 0,
+            "CpuPercent": 0,
+            "IOMaximumIOps": 0,
+            "IOMaximumBandwidth": 0
+        },
+        "GraphDriver": {
+            "Name": "overlay2",
+            "Data": {
+                "LowerDir": "/var/lib/docker/overlay2/dda9abfd3ab0c4423473b009abf1297476111d82f742677167ae53f77538f9c0-init/diff:/var/lib/docker/overlay2/627a721401d91083bdefc3f3eed5f1117719ad9c2e88aa61d6ffae87bc0157e7/diff",
+                "MergedDir": "/var/lib/docker/overlay2/dda9abfd3ab0c4423473b009abf1297476111d82f742677167ae53f77538f9c0/merged",
+                "UpperDir": "/var/lib/docker/overlay2/dda9abfd3ab0c4423473b009abf1297476111d82f742677167ae53f77538f9c0/diff",
+                "WorkDir": "/var/lib/docker/overlay2/dda9abfd3ab0c4423473b009abf1297476111d82f742677167ae53f77538f9c0/work"
+            }
+        },
+        "Mounts": [],
+        "Config": {
+            "Hostname": "0d42c747d730",
+            "Domainname": "",
+            "User": "",
+            "AttachStdin": true,
+            "AttachStdout": true,
+            "AttachStderr": true,
+            "Tty": true,
+            "OpenStdin": true,
+            "StdinOnce": true,
+            "Env": [
+                "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+            ],
+            "Cmd": [
+                "/bin/bash"
+            ],
+            "Image": "centos",
+            "Volumes": null,
+            "WorkingDir": "",
+            "Entrypoint": null,
+            "OnBuild": null,
+            "Labels": {
+                "org.label-schema.build-date": "20200611",
+                "org.label-schema.license": "GPLv2",
+                "org.label-schema.name": "CentOS Base Image",
+                "org.label-schema.schema-version": "1.0",
+                "org.label-schema.vendor": "CentOS"
+            }
+        },
+        "NetworkSettings": {
+            "Bridge": "",
+            "SandboxID": "adebda809d7080276ea71e6026461d019f4b9b254d7d66f87fd3d35951579d17",
+            "HairpinMode": false,
+            "LinkLocalIPv6Address": "",
+            "LinkLocalIPv6PrefixLen": 0,
+            "Ports": {},
+            "SandboxKey": "/var/run/docker/netns/adebda809d70",
+            "SecondaryIPAddresses": null,
+            "SecondaryIPv6Addresses": null,
+            "EndpointID": "",
+            "Gateway": "",
+            "GlobalIPv6Address": "",
+            "GlobalIPv6PrefixLen": 0,
+            "IPAddress": "",
+            "IPPrefixLen": 0,
+            "IPv6Gateway": "",
+            "MacAddress": "",
+            "Networks": {
+                "none": {
+                    "IPAMConfig": null,
+                    "Links": null,
+                    "Aliases": null,
+                    "NetworkID": "b4d9dec942c9edae4b8cc78e2f815b0115dd7e76b09f1793cea169dc57fc3702",
+                    "EndpointID": "56ad1bffb1c7ba624baf6ae0822b3e18ca5b0dc71716478523bc554b0ce9c3f6",
+                    "Gateway": "",
+                    "IPAddress": "",
+                    "IPPrefixLen": 0,
+                    "IPv6Gateway": "",
+                    "GlobalIPv6Address": "",
+                    "GlobalIPv6PrefixLen": 0,
+                    "MacAddress": ""
+                }
+            }
+        }
+    }
+]
+[root@node1 ~]# brctl show
+bridge name	bridge id		STP enabled	interfaces
+docker0		8000.0242cd0cc1d6	no		
+[root@node1 ~]# ls /var/run/docker
+libcontainerd  libnetwork  netns  plugins  swarm
+[root@node1 ~]# ln -s /var/run/docker/netns  /var/run/netns
+[root@node1 ~]# ip netns show
+adebda809d70
+[root@node1 ~]# ip netns show adebda809d70 ip l
+adebda809d70
+[root@node1 ~]# ip netns exec adebda809d70 ip l
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN mode DEFAULT group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+[root@node1 ~]# ip netns exec adebda809d70 ip a
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    inet 127.0.0.1/8 scope host lo
+       valid_lft forever preferred_lft forever
+    inet6 ::1/128 scope host 
+       valid_lft forever preferred_lft forever
+[root@node1 ~]# ip netns exec adebda809d70 ip r
+[root@node1 ~]# 
+
+
+====================================
+
+[root@node1 ~]# ip l
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN mode DEFAULT group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+2: eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UP mode DEFAULT group default qlen 1000
+    link/ether 52:54:00:8b:60:7f brd ff:ff:ff:ff:ff:ff
+3: docker0: <NO-CARRIER,BROADCAST,MULTICAST,UP> mtu 1500 qdisc noqueue state DOWN mode DEFAULT group default 
+    link/ether 02:42:cd:0c:c1:d6 brd ff:ff:ff:ff:ff:ff
+40: br-45810ff9b581: <NO-CARRIER,BROADCAST,MULTICAST,UP> mtu 1500 qdisc noqueue state DOWN mode DEFAULT group default 
+    link/ether 02:42:d4:d0:8a:c3 brd ff:ff:ff:ff:ff:ff
+[root@node1 ~]# ip a
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    inet 127.0.0.1/8 scope host lo
+       valid_lft forever preferred_lft forever
+    inet6 ::1/128 scope host 
+       valid_lft forever preferred_lft forever
+2: eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UP group default qlen 1000
+    link/ether 52:54:00:8b:60:7f brd ff:ff:ff:ff:ff:ff
+    inet 10.10.50.101/24 brd 10.10.50.255 scope global noprefixroute eth0
+       valid_lft forever preferred_lft forever
+    inet6 fe80::44cb:72bc:5bf6:cecb/64 scope link tentative noprefixroute dadfailed 
+       valid_lft forever preferred_lft forever
+    inet6 fe80::fb69:18bd:38b1:ef43/64 scope link noprefixroute 
+       valid_lft forever preferred_lft forever
+3: docker0: <NO-CARRIER,BROADCAST,MULTICAST,UP> mtu 1500 qdisc noqueue state DOWN group default 
+    link/ether 02:42:cd:0c:c1:d6 brd ff:ff:ff:ff:ff:ff
+    inet 172.17.0.1/16 scope global docker0
+       valid_lft forever preferred_lft forever
+    inet6 fe80::42:cdff:fe0c:c1d6/64 scope link 
+       valid_lft forever preferred_lft forever
+40: br-45810ff9b581: <NO-CARRIER,BROADCAST,MULTICAST,UP> mtu 1500 qdisc noqueue state DOWN group default 
+    link/ether 02:42:d4:d0:8a:c3 brd ff:ff:ff:ff:ff:ff
+    inet 172.18.0.1/16 scope global br-45810ff9b581
+       valid_lft forever preferred_lft forever
+    inet6 fe80::42:d4ff:fed0:8ac3/64 scope link 
+       valid_lft forever preferred_lft forever
+[root@node1 ~]# ip r
+default via 10.10.50.1 dev eth0 proto static metric 100 
+10.10.50.0/24 dev eth0 proto kernel scope link src 10.10.50.101 metric 100 
+172.17.0.0/16 dev docker0 proto kernel scope link src 172.17.0.1 
+172.18.0.0/16 dev br-45810ff9b581 proto kernel scope link src 172.18.0.1 
+[root@node1 ~]# more /etc/resolv.conf
+# Generated by NetworkManager
+nameserver 8.8.8.8
+nameserver 8.8.4.4
+[root@node1 ~]# 
+
+
+

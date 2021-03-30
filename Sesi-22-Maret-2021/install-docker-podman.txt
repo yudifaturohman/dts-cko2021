@@ -1,0 +1,2540 @@
+================== Install docker on Centos 7 =====================
+
+# hostname
+instance-1
+
+# more /etc/redhat-release 
+CentOS Linux release 7.9.2009 (Core)
+
+# ls /etc/yum.repos.d/
+CentOS-Base.repo  CentOS-Debuginfo.repo  CentOS-Sources.repo  CentOS-fasttrack.repo      docker-ce.repo     epel.repo
+CentOS-CR.repo    CentOS-Media.repo      CentOS-Vault.repo    CentOS-x86_64-kernel.repo  epel-testing.repo  google-cloud.repo
+
+# cat /etc/yum.repos.d/docker-ce.repo 
+[docker-ce-stable]
+name=Docker CE Stable - $basearch
+baseurl=https://download.docker.com/linux/centos/$releasever/$basearch/stable
+enabled=1
+gpgcheck=1
+gpgkey=https://download.docker.com/linux/centos/gpg
+
+[docker-ce-stable-debuginfo]
+name=Docker CE Stable - Debuginfo $basearch
+baseurl=https://download.docker.com/linux/centos/$releasever/debug-$basearch/stable
+enabled=0
+gpgcheck=1
+gpgkey=https://download.docker.com/linux/centos/gpg
+
+[docker-ce-stable-source]
+name=Docker CE Stable - Sources
+baseurl=https://download.docker.com/linux/centos/$releasever/source/stable
+enabled=0
+gpgcheck=1
+gpgkey=https://download.docker.com/linux/centos/gpg
+
+[docker-ce-test]
+name=Docker CE Test - $basearch
+baseurl=https://download.docker.com/linux/centos/$releasever/$basearch/test
+enabled=0
+gpgcheck=1
+gpgkey=https://download.docker.com/linux/centos/gpg
+
+[docker-ce-test-debuginfo]
+name=Docker CE Test - Debuginfo $basearch
+baseurl=https://download.docker.com/linux/centos/$releasever/debug-$basearch/test
+enabled=0
+gpgcheck=1
+gpgkey=https://download.docker.com/linux/centos/gpg
+
+[docker-ce-test-source]
+name=Docker CE Test - Sources
+baseurl=https://download.docker.com/linux/centos/$releasever/source/test
+enabled=0
+gpgcheck=1
+gpgkey=https://download.docker.com/linux/centos/gpg
+
+[docker-ce-nightly]
+name=Docker CE Nightly - $basearch
+baseurl=https://download.docker.com/linux/centos/$releasever/$basearch/nightly
+enabled=0
+gpgcheck=1
+gpgkey=https://download.docker.com/linux/centos/gpg
+
+[docker-ce-nightly-debuginfo]
+name=Docker CE Nightly - Debuginfo $basearch
+baseurl=https://download.docker.com/linux/centos/$releasever/debug-$basearch/nightly
+enabled=0
+gpgcheck=1
+gpgkey=https://download.docker.com/linux/centos/gpg
+
+[docker-ce-nightly-source]
+name=Docker CE Nightly - Sources
+baseurl=https://download.docker.com/linux/centos/$releasever/source/nightly
+enabled=0
+gpgcheck=1
+gpgkey=https://download.docker.com/linux/centos/gpg
+
+# yum repolist
+Failed to set locale, defaulting to C
+Loaded plugins: fastestmirror
+Loading mirror speeds from cached hostfile
+ * base: mirror.gi.co.id
+ * epel: epel.mirror.angkasa.id
+ * extras: mirror.biznetgio.com
+ * updates: mirror.papua.go.id
+repo id                                                            repo name                                                                                status
+base/7/x86_64                                                      CentOS-7 - Base                                                                          10072
+docker-ce-stable/7/x86_64                                          Docker CE Stable - x86_64                                                                  108
+epel/x86_64                                                        Extra Packages for Enterprise Linux 7 - x86_64                                           13564
+extras/7/x86_64                                                    CentOS-7 - Extras                                                                          460
+google-cloud-sdk                                                   Google Cloud SDK                                                                          1194
+google-compute-engine                                              Google Compute Engine                                                                       12
+updates/7/x86_64                                                   CentOS-7 - Updates                                                                        1898
+repolist: 27308
+
+# yum list |grep docker
+Failed to set locale, defaulting to C
+cockpit-docker.x86_64                     195.12-1.el7.centos          extras   
+containerd.io.x86_64                      1.4.4-3.1.el7                docker-ce-stable
+docker.x86_64                             2:1.13.1-204.git0be3e21.el7  extras   
+docker-ce.x86_64                          3:20.10.5-3.el7              docker-ce-stable
+docker-ce-cli.x86_64                      1:20.10.5-3.el7              docker-ce-stable
+docker-ce-rootless-extras.x86_64          20.10.5-3.el7                docker-ce-stable
+docker-ce-selinux.noarch                  17.03.3.ce-1.el7             docker-ce-stable
+docker-client.x86_64                      2:1.13.1-204.git0be3e21.el7  extras   
+docker-client-latest.x86_64               1.13.1-58.git87f2fab.el7.centos
+docker-common.x86_64                      2:1.13.1-204.git0be3e21.el7  extras   
+docker-compose.noarch                     1.18.0-4.el7                 epel     
+docker-distribution.x86_64                2.6.2-2.git48294d9.el7       extras   
+docker-latest.x86_64                      1.13.1-58.git87f2fab.el7.centos
+docker-latest-logrotate.x86_64            1.13.1-58.git87f2fab.el7.centos
+docker-latest-v1.10-migrator.x86_64       1.13.1-58.git87f2fab.el7.centos
+docker-logrotate.x86_64                   2:1.13.1-204.git0be3e21.el7  extras   
+docker-lvm-plugin.x86_64                  2:1.13.1-204.git0be3e21.el7  extras   
+docker-novolume-plugin.x86_64             2:1.13.1-204.git0be3e21.el7  extras   
+docker-registry.x86_64                    0.9.1-7.el7                  extras   
+docker-v1.10-migrator.x86_64              2:1.13.1-204.git0be3e21.el7  extras   
+golang-github-fsouza-go-dockerclient-devel.x86_64
+kdocker.x86_64                            4.9-1.el7                    epel     
+pcp-pmda-docker.x86_64                    4.3.2-13.el7_9               updates  
+podman-docker.noarch                      1.6.4-27.el7_9               extras   
+python-docker-py.noarch                   1:1.10.6-11.el7              extras   
+python-docker-pycreds.noarch              1:0.3.0-11.el7               extras   
+python-docker-scripts.noarch              0.4.4-1.el7                  epel     
+python-dockerfile-parse.noarch            0.0.5-1.el7                  epel     
+python2-avocado-plugins-runner-docker.noarch
+python2-docker-squash.noarch              1.0.7-3.el7                  epel     
+python2-dockerpty.noarch                  0.4.1-18.el7                 epel     
+python36-docker.noarch                    2.6.1-3.el7                  epel     
+python36-docker-pycreds.noarch            0.2.1-2.el7                  epel     
+python36-dockerpty.noarch                 0.4.1-18.el7                 epel     
+
+# yum install docker
+Failed to set locale, defaulting to C
+Loaded plugins: fastestmirror
+Loading mirror speeds from cached hostfile
+ * base: mirror.gi.co.id
+ * epel: epel.mirror.angkasa.id
+ * extras: mirror.biznetgio.com
+ * updates: mirror.papua.go.id
+Resolving Dependencies
+--> Running transaction check
+---> Package docker.x86_64 2:1.13.1-204.git0be3e21.el7 will be installed
+--> Processing Dependency: docker-common = 2:1.13.1-204.git0be3e21.el7 for package: 2:docker-1.13.1-204.git0be3e21.el7.x86_64
+--> Processing Dependency: docker-client = 2:1.13.1-204.git0be3e21.el7 for package: 2:docker-1.13.1-204.git0be3e21.el7.x86_64
+--> Processing Dependency: subscription-manager-rhsm-certificates for package: 2:docker-1.13.1-204.git0be3e21.el7.x86_64
+--> Running transaction check
+---> Package docker-client.x86_64 2:1.13.1-204.git0be3e21.el7 will be installed
+---> Package docker-common.x86_64 2:1.13.1-204.git0be3e21.el7 will be installed
+--> Processing Dependency: skopeo-containers >= 1:0.1.26-2 for package: 2:docker-common-1.13.1-204.git0be3e21.el7.x86_64
+--> Processing Dependency: oci-umount >= 2:2.3.3-3 for package: 2:docker-common-1.13.1-204.git0be3e21.el7.x86_64
+--> Processing Dependency: oci-systemd-hook >= 1:0.1.4-9 for package: 2:docker-common-1.13.1-204.git0be3e21.el7.x86_64
+--> Processing Dependency: oci-register-machine >= 1:0-5.13 for package: 2:docker-common-1.13.1-204.git0be3e21.el7.x86_64
+--> Processing Dependency: lvm2 >= 2.02.112 for package: 2:docker-common-1.13.1-204.git0be3e21.el7.x86_64
+--> Processing Dependency: container-storage-setup >= 0.9.0-1 for package: 2:docker-common-1.13.1-204.git0be3e21.el7.x86_64
+--> Processing Dependency: container-selinux >= 2:2.51-1 for package: 2:docker-common-1.13.1-204.git0be3e21.el7.x86_64
+--> Processing Dependency: atomic-registries for package: 2:docker-common-1.13.1-204.git0be3e21.el7.x86_64
+---> Package subscription-manager-rhsm-certificates.x86_64 0:1.24.45-1.el7.centos will be installed
+--> Running transaction check
+---> Package atomic-registries.x86_64 1:1.22.1-33.gitb507039.el7_8 will be installed
+--> Processing Dependency: python-yaml for package: 1:atomic-registries-1.22.1-33.gitb507039.el7_8.x86_64
+--> Processing Dependency: python-setuptools for package: 1:atomic-registries-1.22.1-33.gitb507039.el7_8.x86_64
+--> Processing Dependency: python-pytoml for package: 1:atomic-registries-1.22.1-33.gitb507039.el7_8.x86_64
+---> Package container-selinux.noarch 2:2.119.2-1.911c772.el7_8 will be installed
+--> Processing Dependency: policycoreutils-python for package: 2:container-selinux-2.119.2-1.911c772.el7_8.noarch
+---> Package container-storage-setup.noarch 0:0.11.0-2.git5eaf76c.el7 will be installed
+---> Package containers-common.x86_64 1:0.1.40-11.el7_8 will be installed
+--> Processing Dependency: subscription-manager for package: 1:containers-common-0.1.40-11.el7_8.x86_64
+--> Processing Dependency: slirp4netns for package: 1:containers-common-0.1.40-11.el7_8.x86_64
+--> Processing Dependency: fuse-overlayfs for package: 1:containers-common-0.1.40-11.el7_8.x86_64
+---> Package lvm2.x86_64 7:2.02.187-6.el7_9.4 will be installed
+--> Processing Dependency: lvm2-libs = 7:2.02.187-6.el7_9.4 for package: 7:lvm2-2.02.187-6.el7_9.4.x86_64
+--> Processing Dependency: device-mapper-persistent-data >= 0.7.0-0.1.rc6 for package: 7:lvm2-2.02.187-6.el7_9.4.x86_64
+--> Processing Dependency: liblvm2app.so.2.2(Base)(64bit) for package: 7:lvm2-2.02.187-6.el7_9.4.x86_64
+--> Processing Dependency: libdevmapper-event.so.1.02(Base)(64bit) for package: 7:lvm2-2.02.187-6.el7_9.4.x86_64
+--> Processing Dependency: libaio.so.1(LIBAIO_0.4)(64bit) for package: 7:lvm2-2.02.187-6.el7_9.4.x86_64
+--> Processing Dependency: libaio.so.1(LIBAIO_0.1)(64bit) for package: 7:lvm2-2.02.187-6.el7_9.4.x86_64
+--> Processing Dependency: liblvm2app.so.2.2()(64bit) for package: 7:lvm2-2.02.187-6.el7_9.4.x86_64
+--> Processing Dependency: libdevmapper-event.so.1.02()(64bit) for package: 7:lvm2-2.02.187-6.el7_9.4.x86_64
+--> Processing Dependency: libaio.so.1()(64bit) for package: 7:lvm2-2.02.187-6.el7_9.4.x86_64
+---> Package oci-register-machine.x86_64 1:0-6.git2b44233.el7 will be installed
+---> Package oci-systemd-hook.x86_64 1:0.2.0-1.git05e6923.el7_6 will be installed
+--> Processing Dependency: libyajl.so.2()(64bit) for package: 1:oci-systemd-hook-0.2.0-1.git05e6923.el7_6.x86_64
+---> Package oci-umount.x86_64 2:2.5-3.el7 will be installed
+--> Running transaction check
+---> Package PyYAML.x86_64 0:3.10-11.el7 will be installed
+--> Processing Dependency: libyaml-0.so.2()(64bit) for package: PyYAML-3.10-11.el7.x86_64
+---> Package device-mapper-event-libs.x86_64 7:1.02.170-6.el7_9.4 will be installed
+---> Package device-mapper-persistent-data.x86_64 0:0.8.5-3.el7_9.2 will be installed
+---> Package fuse-overlayfs.x86_64 0:0.7.2-6.el7_8 will be installed
+--> Processing Dependency: libfuse3.so.3(FUSE_3.2)(64bit) for package: fuse-overlayfs-0.7.2-6.el7_8.x86_64
+--> Processing Dependency: libfuse3.so.3(FUSE_3.0)(64bit) for package: fuse-overlayfs-0.7.2-6.el7_8.x86_64
+--> Processing Dependency: libfuse3.so.3()(64bit) for package: fuse-overlayfs-0.7.2-6.el7_8.x86_64
+---> Package libaio.x86_64 0:0.3.109-13.el7 will be installed
+---> Package lvm2-libs.x86_64 7:2.02.187-6.el7_9.4 will be installed
+--> Processing Dependency: device-mapper-event = 7:1.02.170-6.el7_9.4 for package: 7:lvm2-libs-2.02.187-6.el7_9.4.x86_64
+---> Package policycoreutils-python.x86_64 0:2.5-34.el7 will be installed
+--> Processing Dependency: setools-libs >= 3.3.8-4 for package: policycoreutils-python-2.5-34.el7.x86_64
+--> Processing Dependency: libsemanage-python >= 2.5-14 for package: policycoreutils-python-2.5-34.el7.x86_64
+--> Processing Dependency: audit-libs-python >= 2.1.3-4 for package: policycoreutils-python-2.5-34.el7.x86_64
+--> Processing Dependency: python-IPy for package: policycoreutils-python-2.5-34.el7.x86_64
+--> Processing Dependency: libqpol.so.1(VERS_1.4)(64bit) for package: policycoreutils-python-2.5-34.el7.x86_64
+--> Processing Dependency: libqpol.so.1(VERS_1.2)(64bit) for package: policycoreutils-python-2.5-34.el7.x86_64
+--> Processing Dependency: libcgroup for package: policycoreutils-python-2.5-34.el7.x86_64
+--> Processing Dependency: libapol.so.4(VERS_4.0)(64bit) for package: policycoreutils-python-2.5-34.el7.x86_64
+--> Processing Dependency: checkpolicy for package: policycoreutils-python-2.5-34.el7.x86_64
+--> Processing Dependency: libqpol.so.1()(64bit) for package: policycoreutils-python-2.5-34.el7.x86_64
+--> Processing Dependency: libapol.so.4()(64bit) for package: policycoreutils-python-2.5-34.el7.x86_64
+---> Package python-pytoml.noarch 0:0.1.14-1.git7dea353.el7 will be installed
+---> Package python-setuptools.noarch 0:0.9.8-7.el7 will be installed
+--> Processing Dependency: python-backports-ssl_match_hostname for package: python-setuptools-0.9.8-7.el7.noarch
+---> Package slirp4netns.x86_64 0:0.4.3-4.el7_8 will be installed
+---> Package subscription-manager.x86_64 0:1.24.45-1.el7.centos will be installed
+--> Processing Dependency: subscription-manager-rhsm = 1.24.45 for package: subscription-manager-1.24.45-1.el7.centos.x86_64
+--> Processing Dependency: python-dmidecode >= 3.12.2-2 for package: subscription-manager-1.24.45-1.el7.centos.x86_64
+--> Processing Dependency: usermode for package: subscription-manager-1.24.45-1.el7.centos.x86_64
+--> Processing Dependency: python-syspurpose for package: subscription-manager-1.24.45-1.el7.centos.x86_64
+--> Processing Dependency: python-six for package: subscription-manager-1.24.45-1.el7.centos.x86_64
+--> Processing Dependency: python-inotify for package: subscription-manager-1.24.45-1.el7.centos.x86_64
+--> Processing Dependency: python-ethtool for package: subscription-manager-1.24.45-1.el7.centos.x86_64
+--> Processing Dependency: python-dateutil for package: subscription-manager-1.24.45-1.el7.centos.x86_64
+---> Package yajl.x86_64 0:2.0.4-4.el7 will be installed
+--> Running transaction check
+---> Package audit-libs-python.x86_64 0:2.8.5-4.el7 will be installed
+---> Package checkpolicy.x86_64 0:2.5-8.el7 will be installed
+---> Package device-mapper-event.x86_64 7:1.02.170-6.el7_9.4 will be installed
+---> Package fuse3-libs.x86_64 0:3.6.1-4.el7 will be installed
+---> Package libcgroup.x86_64 0:0.41-21.el7 will be installed
+---> Package libsemanage-python.x86_64 0:2.5-14.el7 will be installed
+---> Package libyaml.x86_64 0:0.1.4-11.el7_0 will be installed
+---> Package python-IPy.noarch 0:0.75-6.el7 will be installed
+---> Package python-backports-ssl_match_hostname.noarch 0:3.5.0.1-1.el7 will be installed
+--> Processing Dependency: python-ipaddress for package: python-backports-ssl_match_hostname-3.5.0.1-1.el7.noarch
+--> Processing Dependency: python-backports for package: python-backports-ssl_match_hostname-3.5.0.1-1.el7.noarch
+---> Package python-dateutil.noarch 0:1.5-7.el7 will be installed
+---> Package python-dmidecode.x86_64 0:3.12.2-4.el7 will be installed
+--> Processing Dependency: libxml2-python for package: python-dmidecode-3.12.2-4.el7.x86_64
+--> Processing Dependency: libxml2mod.so()(64bit) for package: python-dmidecode-3.12.2-4.el7.x86_64
+---> Package python-ethtool.x86_64 0:0.8-8.el7 will be installed
+--> Processing Dependency: libnl.so.1()(64bit) for package: python-ethtool-0.8-8.el7.x86_64
+---> Package python-inotify.noarch 0:0.9.4-4.el7 will be installed
+---> Package python-six.noarch 0:1.9.0-2.el7 will be installed
+---> Package python-syspurpose.x86_64 0:1.24.45-1.el7.centos will be installed
+---> Package setools-libs.x86_64 0:3.3.8-4.el7 will be installed
+---> Package subscription-manager-rhsm.x86_64 0:1.24.45-1.el7.centos will be installed
+---> Package usermode.x86_64 0:1.111-6.el7 will be installed
+--> Running transaction check
+---> Package libnl.x86_64 0:1.1.4-3.el7 will be installed
+---> Package libxml2-python.x86_64 0:2.9.1-6.el7.5 will be installed
+---> Package python-backports.x86_64 0:1.0-8.el7 will be installed
+---> Package python-ipaddress.noarch 0:1.0.16-2.el7 will be installed
+--> Finished Dependency Resolution
+--> Finding unneeded leftover dependencies
+Found and removing 0 unneeded dependencies
+
+Dependencies Resolved
+
+==================================================================================================================================================================
+ Package                                                  Arch                     Version                                        Repository                 Size
+==================================================================================================================================================================
+Installing:
+ docker                                                   x86_64                   2:1.13.1-204.git0be3e21.el7                    extras                     18 M
+Installing for dependencies:
+ PyYAML                                                   x86_64                   3.10-11.el7                                    base                      153 k
+ atomic-registries                                        x86_64                   1:1.22.1-33.gitb507039.el7_8                   extras                     36 k
+ audit-libs-python                                        x86_64                   2.8.5-4.el7                                    base                       76 k
+ checkpolicy                                              x86_64                   2.5-8.el7                                      base                      295 k
+ container-selinux                                        noarch                   2:2.119.2-1.911c772.el7_8                      extras                     40 k
+ container-storage-setup                                  noarch                   0.11.0-2.git5eaf76c.el7                        extras                     35 k
+ containers-common                                        x86_64                   1:0.1.40-11.el7_8                              extras                     43 k
+ device-mapper-event                                      x86_64                   7:1.02.170-6.el7_9.4                           updates                   192 k
+ device-mapper-event-libs                                 x86_64                   7:1.02.170-6.el7_9.4                           updates                   192 k
+ device-mapper-persistent-data                            x86_64                   0.8.5-3.el7_9.2                                updates                   423 k
+ docker-client                                            x86_64                   2:1.13.1-204.git0be3e21.el7                    extras                    3.9 M
+ docker-common                                            x86_64                   2:1.13.1-204.git0be3e21.el7                    extras                    100 k
+ fuse-overlayfs                                           x86_64                   0.7.2-6.el7_8                                  extras                     54 k
+ fuse3-libs                                               x86_64                   3.6.1-4.el7                                    extras                     82 k
+ libaio                                                   x86_64                   0.3.109-13.el7                                 base                       24 k
+ libcgroup                                                x86_64                   0.41-21.el7                                    base                       66 k
+ libnl                                                    x86_64                   1.1.4-3.el7                                    base                      128 k
+ libsemanage-python                                       x86_64                   2.5-14.el7                                     base                      113 k
+ libxml2-python                                           x86_64                   2.9.1-6.el7.5                                  base                      247 k
+ libyaml                                                  x86_64                   0.1.4-11.el7_0                                 base                       55 k
+ lvm2                                                     x86_64                   7:2.02.187-6.el7_9.4                           updates                   1.3 M
+ lvm2-libs                                                x86_64                   7:2.02.187-6.el7_9.4                           updates                   1.1 M
+ oci-register-machine                                     x86_64                   1:0-6.git2b44233.el7                           extras                    1.1 M
+ oci-systemd-hook                                         x86_64                   1:0.2.0-1.git05e6923.el7_6                     extras                     34 k
+ oci-umount                                               x86_64                   2:2.5-3.el7                                    extras                     33 k
+ policycoreutils-python                                   x86_64                   2.5-34.el7                                     base                      457 k
+ python-IPy                                               noarch                   0.75-6.el7                                     base                       32 k
+ python-backports                                         x86_64                   1.0-8.el7                                      base                      5.8 k
+ python-backports-ssl_match_hostname                      noarch                   3.5.0.1-1.el7                                  base                       13 k
+ python-dateutil                                          noarch                   1.5-7.el7                                      base                       85 k
+ python-dmidecode                                         x86_64                   3.12.2-4.el7                                   base                       83 k
+ python-ethtool                                           x86_64                   0.8-8.el7                                      base                       34 k
+ python-inotify                                           noarch                   0.9.4-4.el7                                    base                       49 k
+ python-ipaddress                                         noarch                   1.0.16-2.el7                                   base                       34 k
+ python-pytoml                                            noarch                   0.1.14-1.git7dea353.el7                        extras                     18 k
+ python-setuptools                                        noarch                   0.9.8-7.el7                                    base                      397 k
+ python-six                                               noarch                   1.9.0-2.el7                                    base                       29 k
+ python-syspurpose                                        x86_64                   1.24.45-1.el7.centos                           updates                   274 k
+ setools-libs                                             x86_64                   3.3.8-4.el7                                    base                      620 k
+ slirp4netns                                              x86_64                   0.4.3-4.el7_8                                  extras                     81 k
+ subscription-manager                                     x86_64                   1.24.45-1.el7.centos                           updates                   1.1 M
+ subscription-manager-rhsm                                x86_64                   1.24.45-1.el7.centos                           updates                   332 k
+ subscription-manager-rhsm-certificates                   x86_64                   1.24.45-1.el7.centos                           updates                   236 k
+ usermode                                                 x86_64                   1.111-6.el7                                    base                      193 k
+ yajl                                                     x86_64                   2.0.4-4.el7                                    base                       39 k
+
+Transaction Summary
+==================================================================================================================================================================
+Install  1 Package (+45 Dependent packages)
+
+Total download size: 31 M
+Installed size: 106 M
+Is this ok [y/d/N]: y
+Downloading packages:
+(1/46): atomic-registries-1.22.1-33.gitb507039.el7_8.x86_64.rpm                                                                            |  36 kB  00:00:00     
+(2/46): PyYAML-3.10-11.el7.x86_64.rpm                                                                                                      | 153 kB  00:00:00     
+(3/46): audit-libs-python-2.8.5-4.el7.x86_64.rpm                                                                                           |  76 kB  00:00:00     
+(4/46): checkpolicy-2.5-8.el7.x86_64.rpm                                                                                                   | 295 kB  00:00:00     
+(5/46): container-selinux-2.119.2-1.911c772.el7_8.noarch.rpm                                                                               |  40 kB  00:00:00     
+(6/46): container-storage-setup-0.11.0-2.git5eaf76c.el7.noarch.rpm                                                                         |  35 kB  00:00:00     
+(7/46): containers-common-0.1.40-11.el7_8.x86_64.rpm                                                                                       |  43 kB  00:00:00     
+(8/46): device-mapper-event-1.02.170-6.el7_9.4.x86_64.rpm                                                                                  | 192 kB  00:00:00     
+(9/46): device-mapper-event-libs-1.02.170-6.el7_9.4.x86_64.rpm                                                                             | 192 kB  00:00:00     
+(10/46): device-mapper-persistent-data-0.8.5-3.el7_9.2.x86_64.rpm                                                                          | 423 kB  00:00:00     
+(11/46): docker-client-1.13.1-204.git0be3e21.el7.x86_64.rpm                                                                                | 3.9 MB  00:00:00     
+(12/46): docker-1.13.1-204.git0be3e21.el7.x86_64.rpm                                                                                       |  18 MB  00:00:00     
+(13/46): docker-common-1.13.1-204.git0be3e21.el7.x86_64.rpm                                                                                | 100 kB  00:00:00     
+(14/46): fuse3-libs-3.6.1-4.el7.x86_64.rpm                                                                                                 |  82 kB  00:00:00     
+(15/46): fuse-overlayfs-0.7.2-6.el7_8.x86_64.rpm                                                                                           |  54 kB  00:00:00     
+(16/46): libcgroup-0.41-21.el7.x86_64.rpm                                                                                                  |  66 kB  00:00:00     
+(17/46): libaio-0.3.109-13.el7.x86_64.rpm                                                                                                  |  24 kB  00:00:00     
+(18/46): libsemanage-python-2.5-14.el7.x86_64.rpm                                                                                          | 113 kB  00:00:00     
+(19/46): libxml2-python-2.9.1-6.el7.5.x86_64.rpm                                                                                           | 247 kB  00:00:00     
+(20/46): libnl-1.1.4-3.el7.x86_64.rpm                                                                                                      | 128 kB  00:00:00     
+(21/46): libyaml-0.1.4-11.el7_0.x86_64.rpm                                                                                                 |  55 kB  00:00:00     
+(22/46): oci-systemd-hook-0.2.0-1.git05e6923.el7_6.x86_64.rpm                                                                              |  34 kB  00:00:00     
+(23/46): oci-umount-2.5-3.el7.x86_64.rpm                                                                                                   |  33 kB  00:00:00     
+(24/46): python-IPy-0.75-6.el7.noarch.rpm                                                                                                  |  32 kB  00:00:00     
+(25/46): lvm2-2.02.187-6.el7_9.4.x86_64.rpm                                                                                                | 1.3 MB  00:00:00     
+(26/46): python-backports-1.0-8.el7.x86_64.rpm                                                                                             | 5.8 kB  00:00:00     
+(27/46): python-backports-ssl_match_hostname-3.5.0.1-1.el7.noarch.rpm                                                                      |  13 kB  00:00:00     
+(28/46): oci-register-machine-0-6.git2b44233.el7.x86_64.rpm                                                                                | 1.1 MB  00:00:00     
+(29/46): python-dateutil-1.5-7.el7.noarch.rpm                                                                                              |  85 kB  00:00:00     
+(30/46): python-dmidecode-3.12.2-4.el7.x86_64.rpm                                                                                          |  83 kB  00:00:00     
+(31/46): lvm2-libs-2.02.187-6.el7_9.4.x86_64.rpm                                                                                           | 1.1 MB  00:00:00     
+(32/46): python-ethtool-0.8-8.el7.x86_64.rpm                                                                                               |  34 kB  00:00:00     
+(33/46): policycoreutils-python-2.5-34.el7.x86_64.rpm                                                                                      | 457 kB  00:00:00     
+(34/46): python-inotify-0.9.4-4.el7.noarch.rpm                                                                                             |  49 kB  00:00:00     
+(35/46): python-setuptools-0.9.8-7.el7.noarch.rpm                                                                                          | 397 kB  00:00:00     
+(36/46): python-six-1.9.0-2.el7.noarch.rpm                                                                                                 |  29 kB  00:00:00     
+(37/46): python-syspurpose-1.24.45-1.el7.centos.x86_64.rpm                                                                                 | 274 kB  00:00:00     
+(38/46): python-ipaddress-1.0.16-2.el7.noarch.rpm                                                                                          |  34 kB  00:00:00     
+(39/46): setools-libs-3.3.8-4.el7.x86_64.rpm                                                                                               | 620 kB  00:00:00     
+(40/46): python-pytoml-0.1.14-1.git7dea353.el7.noarch.rpm                                                                                  |  18 kB  00:00:00     
+(41/46): subscription-manager-1.24.45-1.el7.centos.x86_64.rpm                                                                              | 1.1 MB  00:00:00     
+(42/46): subscription-manager-rhsm-certificates-1.24.45-1.el7.centos.x86_64.rpm                                                            | 236 kB  00:00:00     
+(43/46): usermode-1.111-6.el7.x86_64.rpm                                                                                                   | 193 kB  00:00:00     
+(44/46): slirp4netns-0.4.3-4.el7_8.x86_64.rpm                                                                                              |  81 kB  00:00:00     
+(45/46): subscription-manager-rhsm-1.24.45-1.el7.centos.x86_64.rpm                                                                         | 332 kB  00:00:00     
+(46/46): yajl-2.0.4-4.el7.x86_64.rpm                                                                                                       |  39 kB  00:00:00     
+------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Total                                                                                                                              25 MB/s |  31 MB  00:00:01     
+Running transaction check
+Running transaction test
+Transaction test succeeded
+Running transaction
+  Installing : libaio-0.3.109-13.el7.x86_64                                                                                                                  1/46 
+  Installing : 7:device-mapper-event-libs-1.02.170-6.el7_9.4.x86_64                                                                                          2/46 
+  Installing : python-six-1.9.0-2.el7.noarch                                                                                                                 3/46 
+  Installing : yajl-2.0.4-4.el7.x86_64                                                                                                                       4/46 
+  Installing : subscription-manager-rhsm-certificates-1.24.45-1.el7.centos.x86_64                                                                            5/46 
+  Installing : python-dateutil-1.5-7.el7.noarch                                                                                                              6/46 
+  Installing : subscription-manager-rhsm-1.24.45-1.el7.centos.x86_64                                                                                         7/46 
+  Installing : 2:oci-umount-2.5-3.el7.x86_64                                                                                                                 8/46 
+  Installing : 1:oci-systemd-hook-0.2.0-1.git05e6923.el7_6.x86_64                                                                                            9/46 
+  Installing : 7:device-mapper-event-1.02.170-6.el7_9.4.x86_64                                                                                              10/46 
+  Installing : 7:lvm2-libs-2.02.187-6.el7_9.4.x86_64                                                                                                        11/46 
+  Installing : device-mapper-persistent-data-0.8.5-3.el7_9.2.x86_64                                                                                         12/46 
+  Installing : 7:lvm2-2.02.187-6.el7_9.4.x86_64                                                                                                             13/46 
+  Installing : container-storage-setup-0.11.0-2.git5eaf76c.el7.noarch                                                                                       14/46 
+  Installing : libcgroup-0.41-21.el7.x86_64                                                                                                                 15/46 
+  Installing : usermode-1.111-6.el7.x86_64                                                                                                                  16/46 
+  Installing : python-ipaddress-1.0.16-2.el7.noarch                                                                                                         17/46 
+  Installing : libnl-1.1.4-3.el7.x86_64                                                                                                                     18/46 
+  Installing : python-ethtool-0.8-8.el7.x86_64                                                                                                              19/46 
+  Installing : libxml2-python-2.9.1-6.el7.5.x86_64                                                                                                          20/46 
+  Installing : python-dmidecode-3.12.2-4.el7.x86_64                                                                                                         21/46 
+  Installing : libyaml-0.1.4-11.el7_0.x86_64                                                                                                                22/46 
+  Installing : PyYAML-3.10-11.el7.x86_64                                                                                                                    23/46 
+  Installing : audit-libs-python-2.8.5-4.el7.x86_64                                                                                                         24/46 
+  Installing : python-backports-1.0-8.el7.x86_64                                                                                                            25/46 
+  Installing : python-backports-ssl_match_hostname-3.5.0.1-1.el7.noarch                                                                                     26/46 
+  Installing : python-setuptools-0.9.8-7.el7.noarch                                                                                                         27/46 
+  Installing : slirp4netns-0.4.3-4.el7_8.x86_64                                                                                                             28/46 
+  Installing : 1:oci-register-machine-0-6.git2b44233.el7.x86_64                                                                                             29/46 
+  Installing : libsemanage-python-2.5-14.el7.x86_64                                                                                                         30/46 
+  Installing : fuse3-libs-3.6.1-4.el7.x86_64                                                                                                                31/46 
+  Installing : fuse-overlayfs-0.7.2-6.el7_8.x86_64                                                                                                          32/46 
+  Installing : setools-libs-3.3.8-4.el7.x86_64                                                                                                              33/46 
+  Installing : python-syspurpose-1.24.45-1.el7.centos.x86_64                                                                                                34/46 
+  Installing : python-pytoml-0.1.14-1.git7dea353.el7.noarch                                                                                                 35/46 
+  Installing : 1:atomic-registries-1.22.1-33.gitb507039.el7_8.x86_64                                                                                        36/46 
+  Installing : python-IPy-0.75-6.el7.noarch                                                                                                                 37/46 
+  Installing : checkpolicy-2.5-8.el7.x86_64                                                                                                                 38/46 
+  Installing : policycoreutils-python-2.5-34.el7.x86_64                                                                                                     39/46 
+  Installing : 2:container-selinux-2.119.2-1.911c772.el7_8.noarch                                                                                           40/46 
+  Installing : python-inotify-0.9.4-4.el7.noarch                                                                                                            41/46 
+  Installing : subscription-manager-1.24.45-1.el7.centos.x86_64                                                                                             42/46 
+  Installing : 1:containers-common-0.1.40-11.el7_8.x86_64                                                                                                   43/46 
+  Installing : 2:docker-common-1.13.1-204.git0be3e21.el7.x86_64                                                                                             44/46 
+  Installing : 2:docker-client-1.13.1-204.git0be3e21.el7.x86_64                                                                                             45/46 
+  Installing : 2:docker-1.13.1-204.git0be3e21.el7.x86_64                                                                                                    46/46 
+  Verifying  : 7:lvm2-libs-2.02.187-6.el7_9.4.x86_64                                                                                                         1/46 
+  Verifying  : python-backports-ssl_match_hostname-3.5.0.1-1.el7.noarch                                                                                      2/46 
+  Verifying  : 1:atomic-registries-1.22.1-33.gitb507039.el7_8.x86_64                                                                                         3/46 
+  Verifying  : python-ethtool-0.8-8.el7.x86_64                                                                                                               4/46 
+  Verifying  : fuse-overlayfs-0.7.2-6.el7_8.x86_64                                                                                                           5/46 
+  Verifying  : 2:container-selinux-2.119.2-1.911c772.el7_8.noarch                                                                                            6/46 
+  Verifying  : 7:device-mapper-event-libs-1.02.170-6.el7_9.4.x86_64                                                                                          7/46 
+  Verifying  : python-inotify-0.9.4-4.el7.noarch                                                                                                             8/46 
+  Verifying  : 2:docker-1.13.1-204.git0be3e21.el7.x86_64                                                                                                     9/46 
+  Verifying  : 1:containers-common-0.1.40-11.el7_8.x86_64                                                                                                   10/46 
+  Verifying  : python-setuptools-0.9.8-7.el7.noarch                                                                                                         11/46 
+  Verifying  : subscription-manager-rhsm-1.24.45-1.el7.centos.x86_64                                                                                        12/46 
+  Verifying  : checkpolicy-2.5-8.el7.x86_64                                                                                                                 13/46 
+  Verifying  : 2:docker-common-1.13.1-204.git0be3e21.el7.x86_64                                                                                             14/46 
+  Verifying  : python-IPy-0.75-6.el7.noarch                                                                                                                 15/46 
+  Verifying  : python-dateutil-1.5-7.el7.noarch                                                                                                             16/46 
+  Verifying  : 2:oci-umount-2.5-3.el7.x86_64                                                                                                                17/46 
+  Verifying  : policycoreutils-python-2.5-34.el7.x86_64                                                                                                     18/46 
+  Verifying  : 2:docker-client-1.13.1-204.git0be3e21.el7.x86_64                                                                                             19/46 
+  Verifying  : python-pytoml-0.1.14-1.git7dea353.el7.noarch                                                                                                 20/46 
+  Verifying  : 7:device-mapper-event-1.02.170-6.el7_9.4.x86_64                                                                                              21/46 
+  Verifying  : libaio-0.3.109-13.el7.x86_64                                                                                                                 22/46 
+  Verifying  : python-syspurpose-1.24.45-1.el7.centos.x86_64                                                                                                23/46 
+  Verifying  : setools-libs-3.3.8-4.el7.x86_64                                                                                                              24/46 
+  Verifying  : fuse3-libs-3.6.1-4.el7.x86_64                                                                                                                25/46 
+  Verifying  : libsemanage-python-2.5-14.el7.x86_64                                                                                                         26/46 
+  Verifying  : 1:oci-systemd-hook-0.2.0-1.git05e6923.el7_6.x86_64                                                                                           27/46 
+  Verifying  : 1:oci-register-machine-0-6.git2b44233.el7.x86_64                                                                                             28/46 
+  Verifying  : subscription-manager-rhsm-certificates-1.24.45-1.el7.centos.x86_64                                                                           29/46 
+  Verifying  : slirp4netns-0.4.3-4.el7_8.x86_64                                                                                                             30/46 
+  Verifying  : python-backports-1.0-8.el7.x86_64                                                                                                            31/46 
+  Verifying  : yajl-2.0.4-4.el7.x86_64                                                                                                                      32/46 
+  Verifying  : audit-libs-python-2.8.5-4.el7.x86_64                                                                                                         33/46 
+  Verifying  : python-dmidecode-3.12.2-4.el7.x86_64                                                                                                         34/46 
+  Verifying  : libyaml-0.1.4-11.el7_0.x86_64                                                                                                                35/46 
+  Verifying  : libxml2-python-2.9.1-6.el7.5.x86_64                                                                                                          36/46 
+  Verifying  : subscription-manager-1.24.45-1.el7.centos.x86_64                                                                                             37/46 
+  Verifying  : libnl-1.1.4-3.el7.x86_64                                                                                                                     38/46 
+  Verifying  : container-storage-setup-0.11.0-2.git5eaf76c.el7.noarch                                                                                       39/46 
+  Verifying  : python-six-1.9.0-2.el7.noarch                                                                                                                40/46 
+  Verifying  : python-ipaddress-1.0.16-2.el7.noarch                                                                                                         41/46 
+  Verifying  : device-mapper-persistent-data-0.8.5-3.el7_9.2.x86_64                                                                                         42/46 
+  Verifying  : 7:lvm2-2.02.187-6.el7_9.4.x86_64                                                                                                             43/46 
+  Verifying  : PyYAML-3.10-11.el7.x86_64                                                                                                                    44/46 
+  Verifying  : usermode-1.111-6.el7.x86_64                                                                                                                  45/46 
+  Verifying  : libcgroup-0.41-21.el7.x86_64                                                                                                                 46/46 
+
+Installed:
+  docker.x86_64 2:1.13.1-204.git0be3e21.el7                                                                                                                       
+
+Dependency Installed:
+  PyYAML.x86_64 0:3.10-11.el7                                                           atomic-registries.x86_64 1:1.22.1-33.gitb507039.el7_8                    
+  audit-libs-python.x86_64 0:2.8.5-4.el7                                                checkpolicy.x86_64 0:2.5-8.el7                                           
+  container-selinux.noarch 2:2.119.2-1.911c772.el7_8                                    container-storage-setup.noarch 0:0.11.0-2.git5eaf76c.el7                 
+  containers-common.x86_64 1:0.1.40-11.el7_8                                            device-mapper-event.x86_64 7:1.02.170-6.el7_9.4                          
+  device-mapper-event-libs.x86_64 7:1.02.170-6.el7_9.4                                  device-mapper-persistent-data.x86_64 0:0.8.5-3.el7_9.2                   
+  docker-client.x86_64 2:1.13.1-204.git0be3e21.el7                                      docker-common.x86_64 2:1.13.1-204.git0be3e21.el7                         
+  fuse-overlayfs.x86_64 0:0.7.2-6.el7_8                                                 fuse3-libs.x86_64 0:3.6.1-4.el7                                          
+  libaio.x86_64 0:0.3.109-13.el7                                                        libcgroup.x86_64 0:0.41-21.el7                                           
+  libnl.x86_64 0:1.1.4-3.el7                                                            libsemanage-python.x86_64 0:2.5-14.el7                                   
+  libxml2-python.x86_64 0:2.9.1-6.el7.5                                                 libyaml.x86_64 0:0.1.4-11.el7_0                                          
+  lvm2.x86_64 7:2.02.187-6.el7_9.4                                                      lvm2-libs.x86_64 7:2.02.187-6.el7_9.4                                    
+  oci-register-machine.x86_64 1:0-6.git2b44233.el7                                      oci-systemd-hook.x86_64 1:0.2.0-1.git05e6923.el7_6                       
+  oci-umount.x86_64 2:2.5-3.el7                                                         policycoreutils-python.x86_64 0:2.5-34.el7                               
+  python-IPy.noarch 0:0.75-6.el7                                                        python-backports.x86_64 0:1.0-8.el7                                      
+  python-backports-ssl_match_hostname.noarch 0:3.5.0.1-1.el7                            python-dateutil.noarch 0:1.5-7.el7                                       
+  python-dmidecode.x86_64 0:3.12.2-4.el7                                                python-ethtool.x86_64 0:0.8-8.el7                                        
+  python-inotify.noarch 0:0.9.4-4.el7                                                   python-ipaddress.noarch 0:1.0.16-2.el7                                   
+  python-pytoml.noarch 0:0.1.14-1.git7dea353.el7                                        python-setuptools.noarch 0:0.9.8-7.el7                                   
+  python-six.noarch 0:1.9.0-2.el7                                                       python-syspurpose.x86_64 0:1.24.45-1.el7.centos                          
+  setools-libs.x86_64 0:3.3.8-4.el7                                                     slirp4netns.x86_64 0:0.4.3-4.el7_8                                       
+  subscription-manager.x86_64 0:1.24.45-1.el7.centos                                    subscription-manager-rhsm.x86_64 0:1.24.45-1.el7.centos                  
+  subscription-manager-rhsm-certificates.x86_64 0:1.24.45-1.el7.centos                  usermode.x86_64 0:1.111-6.el7                                            
+  yajl.x86_64 0:2.0.4-4.el7                                                            
+
+Complete!
+
+
+=== Docker local Cache ===
+
+# ls /var/lib/docker/
+containers  image  network  overlay2  plugins  swarm  tmp  trust  volumes
+
+# ls -R /var/lib/docker/
+/var/lib/docker/:
+containers  image  network  overlay2  plugins  swarm  tmp  trust  volumes
+
+/var/lib/docker/containers:
+
+/var/lib/docker/image:
+overlay2
+
+/var/lib/docker/image/overlay2:
+distribution  imagedb  layerdb  repositories.json
+
+/var/lib/docker/image/overlay2/distribution:
+
+/var/lib/docker/image/overlay2/imagedb:
+content  metadata
+
+/var/lib/docker/image/overlay2/imagedb/content:
+sha256
+
+/var/lib/docker/image/overlay2/imagedb/content/sha256:
+
+/var/lib/docker/image/overlay2/imagedb/metadata:
+sha256
+
+/var/lib/docker/image/overlay2/imagedb/metadata/sha256:
+
+/var/lib/docker/image/overlay2/layerdb:
+
+/var/lib/docker/network:
+files
+
+/var/lib/docker/network/files:
+local-kv.db
+
+/var/lib/docker/overlay2:
+backingFsBlockDev  l
+
+/var/lib/docker/overlay2/l:
+
+/var/lib/docker/plugins:
+storage  tmp
+
+/var/lib/docker/plugins/storage:
+blobs
+
+/var/lib/docker/plugins/storage/blobs:
+tmp
+
+/var/lib/docker/plugins/storage/blobs/tmp:
+
+/var/lib/docker/plugins/tmp:
+
+/var/lib/docker/swarm:
+
+/var/lib/docker/tmp:
+
+/var/lib/docker/trust:
+
+/var/lib/docker/volumes:
+metadata.db
+
+
+=== Enable & Start Docker Service ===
+
+# systemctl enable docker
+Created symlink from /etc/systemd/system/multi-user.target.wants/docker.service to /usr/lib/systemd/system/docker.service.
+
+# systemctl start docker
+
+
+=== See what happen on Docker local cache, any changes ? ====
+
+# ls -R /var/lib/docker/
+/var/lib/docker/:
+containers  image  network  overlay2  plugins  swarm  tmp  trust  volumes
+
+/var/lib/docker/containers:
+
+/var/lib/docker/image:
+overlay2
+
+/var/lib/docker/image/overlay2:
+distribution  imagedb  layerdb  repositories.json
+
+/var/lib/docker/image/overlay2/distribution:
+
+/var/lib/docker/image/overlay2/imagedb:
+content  metadata
+
+/var/lib/docker/image/overlay2/imagedb/content:
+sha256
+
+/var/lib/docker/image/overlay2/imagedb/content/sha256:
+
+/var/lib/docker/image/overlay2/imagedb/metadata:
+sha256
+
+/var/lib/docker/image/overlay2/imagedb/metadata/sha256:
+
+/var/lib/docker/image/overlay2/layerdb:
+
+/var/lib/docker/network:
+files
+
+/var/lib/docker/network/files:
+local-kv.db
+
+/var/lib/docker/overlay2:
+backingFsBlockDev  l
+
+/var/lib/docker/overlay2/l:
+
+/var/lib/docker/plugins:
+storage  tmp
+
+/var/lib/docker/plugins/storage:
+blobs
+
+/var/lib/docker/plugins/storage/blobs:
+tmp
+
+/var/lib/docker/plugins/storage/blobs/tmp:
+
+/var/lib/docker/plugins/tmp:
+
+/var/lib/docker/swarm:
+
+/var/lib/docker/tmp:
+
+/var/lib/docker/trust:
+
+/var/lib/docker/volumes:
+metadata.db
+
+
+=== Viewing Software Packages ===
+
+# rpm -qa|grep docker
+docker-common-1.13.1-204.git0be3e21.el7.x86_64
+docker-1.13.1-204.git0be3e21.el7.x86_64
+docker-client-1.13.1-204.git0be3e21.el7.x86_64
+
+# rpm -ql docker
+/etc/docker
+/etc/docker/certs.d
+/etc/docker/certs.d/redhat.com
+/etc/docker/certs.d/redhat.com/redhat-ca.crt
+/etc/docker/certs.d/redhat.io
+/etc/docker/certs.d/redhat.io/redhat-ca.crt
+/etc/docker/certs.d/registry.access.redhat.com
+/etc/docker/certs.d/registry.access.redhat.com/redhat-ca.crt
+
+/etc/docker/daemon.json
+/etc/docker/seccomp.json
+
+/etc/sysconfig/docker-network
+/etc/sysconfig/docker-storage
+/etc/sysconfig/docker-storage-setup
+
+/usr/bin/docker-containerd-current
+/usr/bin/docker-containerd-shim-current
+/usr/bin/docker-ctr-current
+/usr/bin/docker-storage-setup
+/usr/bin/dockerd-current
+/usr/lib/systemd/system/docker-cleanup.service
+/usr/lib/systemd/system/docker-cleanup.timer
+/usr/lib/systemd/system/docker-storage-setup.service
+/usr/lib/systemd/system/docker.service
+
+/usr/lib/udev/rules.d/80-docker.rules
+/usr/libexec/docker
+/usr/libexec/docker/docker-init-current
+/usr/libexec/docker/docker-proxy-current
+/usr/libexec/docker/docker-runc-current
+/usr/share/bash-completion/completions/docker
+
+/usr/share/doc/docker-1.13.1
+/usr/share/doc/docker-1.13.1/AUTHORS
+/usr/share/doc/docker-1.13.1/CHANGELOG.md
+/usr/share/doc/docker-1.13.1/CONTRIBUTING.md
+/usr/share/doc/docker-1.13.1/MAINTAINERS
+/usr/share/doc/docker-1.13.1/NOTICE
+/usr/share/doc/docker-1.13.1/README-vim-syntax.md
+/usr/share/doc/docker-1.13.1/README.md
+/usr/share/fish/vendor_completions.d
+/usr/share/fish/vendor_completions.d/docker.fish
+/usr/share/licenses/docker-1.13.1
+/usr/share/licenses/docker-1.13.1/LICENSE
+/usr/share/licenses/docker-1.13.1/LICENSE-vim-syntax
+
+/usr/share/man/man1/docker-attach.1.gz
+/usr/share/man/man1/docker-build.1.gz
+/usr/share/man/man1/docker-commit.1.gz
+/usr/share/man/man1/docker-cp.1.gz
+/usr/share/man/man1/docker-create.1.gz
+/usr/share/man/man1/docker-diff.1.gz
+/usr/share/man/man1/docker-events.1.gz
+/usr/share/man/man1/docker-exec.1.gz
+/usr/share/man/man1/docker-export.1.gz
+/usr/share/man/man1/docker-history.1.gz
+/usr/share/man/man1/docker-images.1.gz
+/usr/share/man/man1/docker-import.1.gz
+/usr/share/man/man1/docker-info.1.gz
+/usr/share/man/man1/docker-inspect.1.gz
+/usr/share/man/man1/docker-kill.1.gz
+/usr/share/man/man1/docker-load.1.gz
+/usr/share/man/man1/docker-login.1.gz
+/usr/share/man/man1/docker-logout.1.gz
+/usr/share/man/man1/docker-logs.1.gz
+/usr/share/man/man1/docker-network-connect.1.gz
+/usr/share/man/man1/docker-network-create.1.gz
+/usr/share/man/man1/docker-network-disconnect.1.gz
+/usr/share/man/man1/docker-network-inspect.1.gz
+/usr/share/man/man1/docker-network-ls.1.gz
+/usr/share/man/man1/docker-network-rm.1.gz
+/usr/share/man/man1/docker-pause.1.gz
+/usr/share/man/man1/docker-port.1.gz
+/usr/share/man/man1/docker-ps.1.gz
+/usr/share/man/man1/docker-pull.1.gz
+/usr/share/man/man1/docker-push.1.gz
+/usr/share/man/man1/docker-rename.1.gz
+/usr/share/man/man1/docker-restart.1.gz
+/usr/share/man/man1/docker-rm.1.gz
+/usr/share/man/man1/docker-rmi.1.gz
+/usr/share/man/man1/docker-run.1.gz
+/usr/share/man/man1/docker-save.1.gz
+/usr/share/man/man1/docker-search.1.gz
+/usr/share/man/man1/docker-start.1.gz
+/usr/share/man/man1/docker-stats.1.gz
+/usr/share/man/man1/docker-stop.1.gz
+/usr/share/man/man1/docker-storage-setup.1.gz
+/usr/share/man/man1/docker-tag.1.gz
+/usr/share/man/man1/docker-top.1.gz
+/usr/share/man/man1/docker-unpause.1.gz
+/usr/share/man/man1/docker-update.1.gz
+/usr/share/man/man1/docker-version.1.gz
+/usr/share/man/man1/docker-wait.1.gz
+/usr/share/man/man1/docker.1.gz
+/usr/share/man/man5/Dockerfile.5.gz
+/usr/share/man/man5/docker-config-json.5.gz
+/usr/share/man/man8/dockerd.8.gz
+/usr/share/vim/vimfiles/doc
+/usr/share/vim/vimfiles/doc/dockerfile.txt
+/usr/share/vim/vimfiles/ftdetect
+/usr/share/vim/vimfiles/ftdetect/dockerfile.vim
+/usr/share/vim/vimfiles/syntax
+/usr/share/vim/vimfiles/syntax/dockerfile.vim
+/usr/share/zsh/site-functions
+/usr/share/zsh/site-functions/_docker
+
+/var/lib/docker
+
+# rpm -ql docker-client
+/usr/bin/docker-current
+/usr/share/licenses/docker-client-1.13.1
+/usr/share/licenses/docker-client-1.13.1/LICENSE
+/usr/share/licenses/docker-client-1.13.1/LICENSE-vim-syntax
+
+# rpm -ql docker-common
+/etc/sysconfig/docker
+/usr/bin/docker
+/usr/bin/docker-containerd
+/usr/bin/docker-containerd-shim
+/usr/bin/dockerd
+/usr/lib/sysctl.d/99-docker.conf
+/usr/libexec/docker
+/usr/share/doc/docker-common-1.13.1
+/usr/share/doc/docker-common-1.13.1/README-docker-common
+
+
+=== Docker's Configuration Files ===
+
+# 
+# pwd
+/etc/docker
+
+# ls
+certs.d  daemon.json  key.json  seccomp.json
+
+# tree
+.
+|-- certs.d
+|   |-- redhat.com
+|   |   `-- redhat-ca.crt -> /etc/rhsm/ca/redhat-uep.pem
+|   |-- redhat.io
+|   |   `-- redhat-ca.crt -> /etc/rhsm/ca/redhat-uep.pem
+|   `-- registry.access.redhat.com
+|       `-- redhat-ca.crt -> /etc/rhsm/ca/redhat-uep.pem
+|-- daemon.json
+|-- key.json
+`-- seccomp.json
+
+4 directories, 6 files
+# more *.json
+::::::::::::::
+daemon.json
+::::::::::::::
+{}
+::::::::::::::
+key.json
+::::::::::::::
+{"crv":"P-256","d":"6EWqalDg-x5i9abrlFtsjTdNY6L4IIx1h-2GXcS1cas","kid":"ZBUV:TVF5:YTDU:DIYO:3BK3:L6RV:7BVV:5UT7:HTKU:TEOH:OV3T:JQFX","kty":"EC","x":"-R24Uo-yT4uQw
+cX7winGU7PIjCZJyJyQlldSwLRvb20","y":"hR9n9rogZV6afNJI5xcSiOF0U_ctfabW25kK7P_Lhjw"}
+::::::::::::::
+seccomp.json
+::::::::::::::
+{
+	"defaultAction": "SCMP_ACT_ERRNO",
+	"archMap": [
+		{
+			"architecture": "SCMP_ARCH_X86_64",
+			"subArchitectures": [
+				"SCMP_ARCH_X86",
+				"SCMP_ARCH_X32"
+			]
+		},
+		{
+			"architecture": "SCMP_ARCH_AARCH64",
+			"subArchitectures": [
+				"SCMP_ARCH_ARM"
+			]
+		},
+		{
+			"architecture": "SCMP_ARCH_MIPS64",
+			"subArchitectures": [
+				"SCMP_ARCH_MIPS",
+				"SCMP_ARCH_MIPS64N32"
+			]
+		},
+		{
+			"architecture": "SCMP_ARCH_MIPS64N32",
+			"subArchitectures": [
+				"SCMP_ARCH_MIPS",
+				"SCMP_ARCH_MIPS64"
+			]
+		},
+		{
+			"architecture": "SCMP_ARCH_MIPSEL64",
+			"subArchitectures": [
+				"SCMP_ARCH_MIPSEL",
+				"SCMP_ARCH_MIPSEL64N32"
+			]
+		},
+		{
+			"architecture": "SCMP_ARCH_MIPSEL64N32",
+			"subArchitectures": [
+				"SCMP_ARCH_MIPSEL",
+				"SCMP_ARCH_MIPSEL64"
+			]
+		},
+		{
+			"architecture": "SCMP_ARCH_S390X",
+			"subArchitectures": [
+				"SCMP_ARCH_S390"
+			]
+		}
+	],
+	"syscalls": [
+		{
+			"names": [
+				"accept",
+				"accept4",
+				"access",
+				"alarm",
+				"alarm",
+				"bind",
+				"brk",
+				"capget",
+				"capset",
+				"chdir",
+				"chmod",
+				"chown",
+				"chown32",
+				"clock_getres",
+				"clock_gettime",
+				"clock_nanosleep",
+				"close",
+				"connect",
+				"copy_file_range",
+				"creat",
+				"dup",
+				"dup2",
+				"dup3",
+				"epoll_create",
+				"epoll_create1",
+				"epoll_ctl",
+				"epoll_ctl_old",
+				"epoll_pwait",
+				"epoll_wait",
+				"epoll_wait_old",
+				"eventfd",
+				"eventfd2",
+				"execve",
+				"execveat",
+				"exit",
+				"exit_group",
+				"faccessat",
+				"fadvise64",
+				"fadvise64_64",
+				"fallocate",
+				"fanotify_mark",
+				"fchdir",
+				"fchmod",
+				"fchmodat",
+				"fchown",
+				"fchown32",
+				"fchownat",
+				"fcntl",
+				"fcntl64",
+				"fdatasync",
+				"fgetxattr",
+				"flistxattr",
+				"flock",
+				"fork",
+				"fremovexattr",
+				"fsetxattr",
+				"fstat",
+				"fstat64",
+				"fstatat64",
+				"fstatfs",
+				"fstatfs64",
+				"fsync",
+				"ftruncate",
+				"ftruncate64",
+				"futex",
+				"futimesat",
+				"getcpu",
+				"getcwd",
+				"getdents",
+				"getdents64",
+				"getegid",
+				"getegid32",
+				"geteuid",
+				"geteuid32",
+				"getgid",
+				"getgid32",
+				"getgroups",
+				"getgroups32",
+				"getitimer",
+				"getpeername",
+				"getpgid",
+				"getpgrp",
+				"getpid",
+				"getppid",
+				"getpriority",
+				"getrandom",
+				"getresgid",
+				"getresgid32",
+				"getresuid",
+				"getresuid32",
+				"getrlimit",
+				"get_robust_list",
+				"getrusage",
+				"getsid",
+				"getsockname",
+				"getsockopt",
+				"get_thread_area",
+				"gettid",
+				"gettimeofday",
+				"getuid",
+				"getuid32",
+				"getxattr",
+				"inotify_add_watch",
+				"inotify_init",
+				"inotify_init1",
+				"inotify_rm_watch",
+				"io_cancel",
+				"ioctl",
+				"io_destroy",
+				"io_getevents",
+				"ioprio_get",
+				"ioprio_set",
+				"io_setup",
+				"io_submit",
+				"ipc",
+				"kill",
+				"lchown",
+				"lchown32",
+				"lgetxattr",
+				"link",
+				"linkat",
+				"listen",
+				"listxattr",
+				"llistxattr",
+				"_llseek",
+				"lremovexattr",
+				"lseek",
+				"lsetxattr",
+				"lstat",
+				"lstat64",
+				"madvise",
+				"memfd_create",
+				"mincore",
+				"mkdir",
+				"mkdirat",
+				"mknod",
+				"mknodat",
+				"mlock",
+				"mlock2",
+				"mlockall",
+				"mmap",
+				"mmap2",
+				"mprotect",
+				"mq_getsetattr",
+				"mq_notify",
+				"mq_open",
+				"mq_timedreceive",
+				"mq_timedsend",
+				"mq_unlink",
+				"mremap",
+				"msgctl",
+				"msgget",
+				"msgrcv",
+				"msgsnd",
+				"msync",
+				"munlock",
+				"munlockall",
+				"munmap",
+				"nanosleep",
+				"newfstatat",
+				"_newselect",
+				"open",
+				"openat",
+				"pause",
+				"pipe",
+				"pipe2",
+				"poll",
+				"ppoll",
+				"prctl",
+				"pread64",
+				"preadv",
+				"prlimit64",
+				"pselect6",
+				"pwrite64",
+				"pwritev",
+				"read",
+				"readahead",
+				"readlink",
+				"readlinkat",
+				"readv",
+				"recv",
+				"recvfrom",
+				"recvmmsg",
+				"recvmsg",
+				"remap_file_pages",
+				"removexattr",
+				"rename",
+				"renameat",
+				"renameat2",
+				"restart_syscall",
+				"rmdir",
+				"rt_sigaction",
+				"rt_sigpending",
+				"rt_sigprocmask",
+				"rt_sigqueueinfo",
+				"rt_sigreturn",
+				"rt_sigsuspend",
+				"rt_sigtimedwait",
+				"rt_tgsigqueueinfo",
+				"sched_getaffinity",
+				"sched_getattr",
+				"sched_getparam",
+				"sched_get_priority_max",
+				"sched_get_priority_min",
+				"sched_getscheduler",
+				"sched_rr_get_interval",
+				"sched_setaffinity",
+				"sched_setattr",
+				"sched_setparam",
+				"sched_setscheduler",
+				"sched_yield",
+				"seccomp",
+				"select",
+				"semctl",
+				"semget",
+				"semop",
+				"semtimedop",
+				"send",
+				"sendfile",
+				"sendfile64",
+				"sendmmsg",
+				"sendmsg",
+				"sendto",
+				"setfsgid",
+				"setfsgid32",
+				"setfsuid",
+				"setfsuid32",
+				"setgid",
+				"setgid32",
+				"setgroups",
+				"setgroups32",
+				"setitimer",
+				"setpgid",
+				"setpriority",
+				"setregid",
+				"setregid32",
+				"setresgid",
+				"setresgid32",
+				"setresuid",
+				"setresuid32",
+				"setreuid",
+				"setreuid32",
+				"setrlimit",
+				"set_robust_list",
+				"setsid",
+				"setsockopt",
+				"set_thread_area",
+				"set_tid_address",
+				"setuid",
+				"setuid32",
+				"setxattr",
+				"shmat",
+				"shmctl",
+				"shmdt",
+				"shmget",
+				"shutdown",
+				"sigaltstack",
+				"signalfd",
+				"signalfd4",
+				"sigreturn",
+				"socket",
+				"socketcall",
+				"socketpair",
+				"splice",
+				"stat",
+				"stat64",
+				"statfs",
+				"statfs64",
+				"statx",
+				"symlink",
+				"symlinkat",
+				"sync",
+				"sync_file_range",
+				"syncfs",
+				"sysinfo",
+				"syslog",
+				"tee",
+				"tgkill",
+				"time",
+				"timer_create",
+				"timer_delete",
+				"timerfd_create",
+				"timerfd_gettime",
+				"timerfd_settime",
+				"timer_getoverrun",
+				"timer_gettime",
+				"timer_settime",
+				"times",
+				"tkill",
+				"truncate",
+				"truncate64",
+				"ugetrlimit",
+				"umask",
+				"uname",
+				"unlink",
+				"unlinkat",
+				"utime",
+				"utimensat",
+				"utimes",
+				"vfork",
+				"vmsplice",
+				"wait4",
+				"waitid",
+				"waitpid",
+				"write",
+				"writev",
+				"mount",
+				"umount2",
+				"reboot",
+				"name_to_handle_at",
+				"unshare"
+			],
+			"action": "SCMP_ACT_ALLOW",
+			"args": [],
+			"comment": "",
+			"includes": {},
+			"excludes": {}
+		},
+		{
+			"names": [
+				"personality"
+			],
+			"action": "SCMP_ACT_ALLOW",
+			"args": [
+				{
+					"index": 0,
+					"value": 0,
+					"valueTwo": 0,
+					"op": "SCMP_CMP_EQ"
+				}
+			],
+			"comment": "",
+			"includes": {},
+			"excludes": {}
+		},
+		{
+			"names": [
+				"personality"
+			],
+			"action": "SCMP_ACT_ALLOW",
+			"args": [
+				{
+					"index": 0,
+					"value": 8,
+					"valueTwo": 0,
+					"op": "SCMP_CMP_EQ"
+				}
+			],
+			"comment": "",
+			"includes": {},
+			"excludes": {}
+		},
+		{
+			"names": [
+				"personality"
+			],
+			"action": "SCMP_ACT_ALLOW",
+			"args": [
+				{
+					"index": 0,
+					"value": 4294967295,
+					"valueTwo": 0,
+					"op": "SCMP_CMP_EQ"
+				}
+			],
+			"comment": "",
+			"includes": {},
+			"excludes": {}
+		},
+		{
+			"names": [
+				"breakpoint",
+				"cacheflush",
+				"set_tls"
+			],
+			"action": "SCMP_ACT_ALLOW",
+			"args": [],
+			"comment": "",
+			"includes": {
+				"arches": [
+					"arm",
+					"arm64"
+				]
+			},
+			"excludes": {}
+		},
+		{
+			"names": [
+				"arch_prctl"
+			],
+			"action": "SCMP_ACT_ALLOW",
+			"args": [],
+			"comment": "",
+			"includes": {
+				"arches": [
+					"amd64",
+					"x32"
+				]
+			},
+			"excludes": {}
+		},
+		{
+			"names": [
+				"modify_ldt"
+			],
+			"action": "SCMP_ACT_ALLOW",
+			"args": [],
+			"comment": "",
+			"includes": {
+				"arches": [
+					"amd64",
+					"x32",
+					"x86"
+				]
+			},
+			"excludes": {}
+		},
+		{
+			"names": [
+				"s390_pci_mmio_read",
+				"s390_pci_mmio_write",
+				"s390_runtime_instr"
+			],
+			"action": "SCMP_ACT_ALLOW",
+			"args": [],
+			"comment": "",
+			"includes": {
+				"arches": [
+					"s390",
+					"s390x"
+				]
+			},
+			"excludes": {}
+		},
+		{
+			"names": [
+				"open_by_handle_at"
+			],
+			"action": "SCMP_ACT_ALLOW",
+			"args": [],
+			"comment": "",
+			"includes": {
+				"caps": [
+					"CAP_DAC_READ_SEARCH"
+				]
+			},
+			"excludes": {}
+		},
+		{
+			"names": [
+				"bpf",
+				"clone",
+				"fanotify_init",
+				"lookup_dcookie",
+				"mount",
+				"name_to_handle_at",
+				"perf_event_open",
+				"setdomainname",
+				"sethostname",
+				"setns",
+				"umount",
+				"umount2",
+				"unshare"
+			],
+			"action": "SCMP_ACT_ALLOW",
+			"args": [],
+			"comment": "",
+			"includes": {
+				"caps": [
+					"CAP_SYS_ADMIN"
+				]
+			},
+			"excludes": {}
+		},
+		{
+			"names": [
+				"clone"
+			],
+			"action": "SCMP_ACT_ALLOW",
+			"args": [
+				{
+					"index": 0,
+					"value": 2080505856,
+					"valueTwo": 0,
+					"op": "SCMP_CMP_MASKED_EQ"
+				}
+			],
+			"comment": "",
+			"includes": {},
+			"excludes": {
+				"caps": [
+					"CAP_SYS_ADMIN"
+				],
+				"arches": [
+					"s390",
+					"s390x"
+				]
+			}
+		},
+		{
+			"names": [
+				"clone"
+			],
+			"action": "SCMP_ACT_ALLOW",
+			"args": [
+				{
+					"index": 1,
+					"value": 2080505856,
+					"valueTwo": 0,
+					"op": "SCMP_CMP_MASKED_EQ"
+				}
+			],
+			"comment": "s390 parameter ordering for clone is different",
+			"includes": {
+				"arches": [
+					"s390",
+					"s390x"
+				]
+			},
+			"excludes": {
+				"caps": [
+					"CAP_SYS_ADMIN"
+				]
+			}
+		},
+		{
+			"names": [
+				"reboot"
+			],
+			"action": "SCMP_ACT_ALLOW",
+			"args": [],
+			"comment": "",
+			"includes": {
+				"caps": [
+					"CAP_SYS_BOOT"
+				]
+			},
+			"excludes": {}
+		},
+		{
+			"names": [
+				"chroot"
+			],
+			"action": "SCMP_ACT_ALLOW",
+			"args": [],
+			"comment": "",
+			"includes": {
+				"caps": [
+					"CAP_SYS_CHROOT"
+				]
+			},
+			"excludes": {}
+		},
+		{
+			"names": [
+				"delete_module",
+				"init_module",
+				"finit_module",
+				"query_module"
+			],
+			"action": "SCMP_ACT_ALLOW",
+			"args": [],
+			"comment": "",
+			"includes": {
+				"caps": [
+					"CAP_SYS_MODULE"
+				]
+			},
+			"excludes": {}
+		},
+		{
+			"names": [
+				"acct"
+			],
+			"action": "SCMP_ACT_ALLOW",
+			"args": [],
+			"comment": "",
+			"includes": {
+				"caps": [
+					"CAP_SYS_PACCT"
+				]
+			},
+			"excludes": {}
+		},
+		{
+			"names": [
+				"kcmp",
+				"process_vm_readv",
+				"process_vm_writev",
+				"ptrace"
+			],
+			"action": "SCMP_ACT_ALLOW",
+			"args": [],
+			"comment": "",
+			"includes": {
+				"caps": [
+					"CAP_SYS_PTRACE"
+				]
+			},
+			"excludes": {}
+		},
+		{
+			"names": [
+				"iopl",
+				"ioperm"
+			],
+			"action": "SCMP_ACT_ALLOW",
+			"args": [],
+			"comment": "",
+			"includes": {
+				"caps": [
+					"CAP_SYS_RAWIO"
+				]
+			},
+			"excludes": {}
+		},
+		{
+			"names": [
+				"settimeofday",
+				"stime",
+				"adjtimex"
+			],
+			"action": "SCMP_ACT_ALLOW",
+			"args": [],
+			"comment": "",
+			"includes": {
+				"caps": [
+					"CAP_SYS_TIME"
+				]
+			},
+			"excludes": {}
+		},
+		{
+			"names": [
+				"vhangup"
+			],
+			"action": "SCMP_ACT_ALLOW",
+			"args": [],
+			"comment": "",
+			"includes": {
+				"caps": [
+					"CAP_SYS_TTY_CONFIG"
+				]
+			},
+			"excludes": {}
+		}
+	]
+}
+# 
+
+
+			},
+			"excludes": {}
+		},
+		{
+			"names": [
+				"vhangup"
+			],
+			"action": "SCMP_ACT_ALLOW",
+			"args": [],
+			"comment": "",
+			"includes": {
+				"caps": [
+					"CAP_SYS_TTY_CONFIG"
+				]
+			},
+			"excludes": {}
+		}
+	]
+}
+
+
+# pwd
+/etc/sysconfig
+
+# ls
+acpid     chronyd   crond           docker-storage          ebtables-config  init              kernel   netconsole       qemu-ga        rsyslog    sshd
+anaconda  console   docker          docker-storage-setup    firewalld        ip6tables-config  man-db   network          rdisc          run-parts  wpa_supplicant
+cbq       cpupower  docker-network  docker-storage.rpmsave  grub             iptables-config   modules  network-scripts  readonly-root  selinux
+
+# ls docker*
+docker  docker-network  docker-storage  docker-storage-setup  docker-storage.rpmsave
+
+# more docker*
+::::::::::::::
+docker
+::::::::::::::
+# /etc/sysconfig/docker
+
+# Modify these options if you want to change the way the docker daemon runs
+OPTIONS='--selinux-enabled --log-driver=journald --signature-verification=false'
+if [ -z "${DOCKER_CERT_PATH}" ]; then
+    DOCKER_CERT_PATH=/etc/docker
+fi
+
+# Do not add registries in this file anymore. Use /etc/containers/registries.conf
+# instead. For more information reference the registries.conf(5) man page.
+
+# Location used for temporary files, such as those created by
+# docker load and build operations. Default is /var/lib/docker/tmp
+# Can be overriden by setting the following environment variable.
+# DOCKER_TMPDIR=/var/tmp
+
+# Controls the /etc/cron.daily/docker-logrotate cron job status.
+# To disable, uncomment the line below.
+# LOGROTATE=false
+
+# docker-latest daemon can be used by starting the docker-latest unitfile.
+# To use docker-latest client, uncomment below lines
+#DOCKERBINARY=/usr/bin/docker-latest
+#DOCKERDBINARY=/usr/bin/dockerd-latest
+#DOCKER_CONTAINERD_BINARY=/usr/bin/docker-containerd-latest
+#DOCKER_CONTAINERD_SHIM_BINARY=/usr/bin/docker-containerd-shim-latest
+
+::::::::::::::
+docker-network
+::::::::::::::
+# /etc/sysconfig/docker-network
+DOCKER_NETWORK_OPTIONS=
+
+::::::::::::::
+docker-storage
+::::::::::::::
+DOCKER_STORAGE_OPTIONS="--storage-driver overlay2 "
+
+::::::::::::::
+docker-storage.rpmsave
+::::::::::::::
+DOCKER_STORAGE_OPTIONS="--storage-driver overlay2 "
+
+::::::::::::::
+docker-storage-setup
+::::::::::::::
+STORAGE_DRIVER=overlay2
+
+
+=== Test Docker functionality ===
+
+# docker search hello
+INDEX       NAME                                                 DESCRIPTION                                     STARS     OFFICIAL   AUTOMATED
+docker.io   docker.io/hello-world                                Hello World! (an example of minimal Docker...   1395      [OK]       
+
+# docker image ls
+REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
+# docker pull docker.io/hello-world
+Using default tag: latest
+Trying to pull repository docker.io/library/hello-world ... 
+latest: Pulling from docker.io/library/hello-world
+b8dfde127a29: Pull complete 
+Digest: sha256:308866a43596e83578c7dfa15e27a73011bdd402185a84c5cd7f32a88b501a24
+Status: Downloaded newer image for docker.io/hello-world:latest
+# docker image ls
+REPOSITORY              TAG                 IMAGE ID            CREATED             SIZE
+docker.io/hello-world   latest              d1165f221234        2 weeks ago         13.3 kB
+# docker container run docker.io/hello-world
+
+Hello from Docker!
+This message shows that your installation appears to be working correctly.
+
+To generate this message, Docker took the following steps:
+ 1. The Docker client contacted the Docker daemon.
+ 2. The Docker daemon pulled the "hello-world" image from the Docker Hub.
+    (amd64)
+ 3. The Docker daemon created a new container from that image which runs the
+    executable that produces the output you are currently reading.
+ 4. The Docker daemon streamed that output to the Docker client, which sent it
+    to your terminal.
+
+To try something more ambitious, you can run an Ubuntu container with:
+ $ docker run -it ubuntu bash
+
+Share images, automate workflows, and more with a free Docker ID:
+ https://hub.docker.com/
+
+For more examples and ideas, visit:
+ https://docs.docker.com/get-started/
+
+
+======================= Install Podman on Centos 8 =========================
+
+# 
+# hostname
+centos8
+
+# cat /etc/redhat-release 
+CentOS Linux release 8.3.2011
+
+# podman
+bash: podman: command not found
+
+# yum list|grep podman
+cockpit-podman.noarch                                  27.1-3.module_el8.3.0+699+d61d9c41                appstream             
+pcp-pmda-podman.x86_64                                 5.1.1-3.el8                                       appstream             
+podman.x86_64                                          2.2.1-7.module_el8.3.0+699+d61d9c41               appstream             
+podman-catatonit.x86_64                                2.2.1-7.module_el8.3.0+699+d61d9c41               appstream             
+podman-docker.noarch                                   2.2.1-7.module_el8.3.0+699+d61d9c41               appstream             
+podman-plugins.x86_64                                  2.2.1-7.module_el8.3.0+699+d61d9c41               appstream             
+podman-remote.x86_64                                   2.2.1-7.module_el8.3.0+699+d61d9c41               appstream             
+podman-tests.x86_64                                    2.2.1-7.module_el8.3.0+699+d61d9c41               appstream             
+python-podman-api.noarch                               1.2.0-0.2.gitd0a45fe.module_el8.3.0+475+c50ce30b  appstream             
+
+# yum install podman
+Last metadata expiration check: 0:18:20 ago on Mon 22 Mar 2021 08:19:33 AM UTC.
+Dependencies resolved.
+=====================================================================================================================================================================
+ Package                                               Architecture          Version                                                  Repository                Size
+=====================================================================================================================================================================
+Installing:
+ podman                                                x86_64                2.2.1-7.module_el8.3.0+699+d61d9c41                      appstream                 14 M
+
+Installing dependencies:
+ checkpolicy                                           x86_64                2.9-1.el8                                                baseos                   348 k
+ conmon                                                x86_64                2:2.0.22-3.module_el8.3.0+699+d61d9c41                   appstream                 50 k
+ container-selinux                                     noarch                2:2.155.0-1.module_el8.3.0+699+d61d9c41                  appstream                 51 k
+ containernetworking-plugins                           x86_64                0.9.0-1.module_el8.3.0+699+d61d9c41                      appstream                 23 M
+ containers-common                                     x86_64                1:1.2.0-9.module_el8.3.0+699+d61d9c41                    appstream                 69 k
+ criu                                                  x86_64                3.15-1.module_el8.3.0+699+d61d9c41                       appstream                511 k
+ dnf-plugin-subscription-manager                       x86_64                1.27.16-1.el8                                            baseos                   288 k
+ fuse-common                                           x86_64                3.2.1-12.el8                                             baseos                    21 k
+ fuse-overlayfs                                        x86_64                1.3.0-2.module_el8.3.0+699+d61d9c41                      appstream                 72 k
+ fuse3                                                 x86_64                3.2.1-12.el8                                             baseos                    50 k
+ fuse3-libs                                            x86_64                3.2.1-12.el8                                             baseos                    94 k
+ libnet                                                x86_64                1.1.6-15.el8                                             appstream                 67 k
+ libslirp                                              x86_64                4.3.1-1.module_el8.3.0+475+c50ce30b                      appstream                 69 k
+ libvarlink                                            x86_64                18-3.el8                                                 baseos                    44 k
+ podman-catatonit                                      x86_64                2.2.1-7.module_el8.3.0+699+d61d9c41                      appstream                310 k
+ policycoreutils-python-utils                          noarch                2.9-9.el8                                                baseos                   251 k
+ protobuf-c                                            x86_64                1.3.0-4.el8                                              appstream                 37 k
+ python3-audit                                         x86_64                3.0-0.17.20191104git1c2f876.el8                          baseos                    86 k
+ python3-ethtool                                       x86_64                0.14-3.el8                                               baseos                    45 k
+ python3-iniparse                                      noarch                0.4-31.el8                                               baseos                    49 k
+ python3-inotify                                       noarch                0.9.6-13.el8                                             baseos                    57 k
+ python3-librepo                                       x86_64                1.12.0-2.el8                                             baseos                    52 k
+ python3-libsemanage                                   x86_64                2.9-3.el8                                                baseos                   127 k
+ python3-policycoreutils                               noarch                2.9-9.el8                                                baseos                   2.2 M
+ python3-setools                                       x86_64                4.3.0-2.el8                                              baseos                   626 k
+ python3-subscription-manager-rhsm                     x86_64                1.27.16-1.el8                                            baseos                   360 k
+ runc                                                  x86_64                1.0.0-70.rc92.module_el8.3.0+699+d61d9c41                appstream                3.7 M
+ slirp4netns                                           x86_64                1.1.8-1.module_el8.3.0+699+d61d9c41                      appstream                 51 k
+ subscription-manager-rhsm-certificates                x86_64                1.27.16-1.el8                                            baseos                   256 k
+ usermode                                              x86_64                1.113-1.el8                                              baseos                   202 k
+Installing weak dependencies:
+ subscription-manager                                  x86_64                1.27.16-1.el8                                            baseos                   1.1 M
+Enabling module streams:
+ container-tools                                                             rhel8                                                                                  
+
+Transaction Summary
+=====================================================================================================================================================================
+Install  32 Packages
+
+Total download size: 47 M
+Installed size: 158 M
+Is this ok [y/N]: y
+Downloading Packages:
+(1/32): conmon-2.0.22-3.module_el8.3.0+699+d61d9c41.x86_64.rpm                                                                       4.3 MB/s |  50 kB     00:00    
+(2/32): container-selinux-2.155.0-1.module_el8.3.0+699+d61d9c41.noarch.rpm                                                           3.2 MB/s |  51 kB     00:00    
+(3/32): containers-common-1.2.0-9.module_el8.3.0+699+d61d9c41.x86_64.rpm                                                              13 MB/s |  69 kB     00:00    
+(4/32): fuse-overlayfs-1.3.0-2.module_el8.3.0+699+d61d9c41.x86_64.rpm                                                                8.9 MB/s |  72 kB     00:00    
+(5/32): libnet-1.1.6-15.el8.x86_64.rpm                                                                                               8.1 MB/s |  67 kB     00:00    
+(6/32): criu-3.15-1.module_el8.3.0+699+d61d9c41.x86_64.rpm                                                                            25 MB/s | 511 kB     00:00    
+(7/32): libslirp-4.3.1-1.module_el8.3.0+475+c50ce30b.x86_64.rpm                                                                      7.8 MB/s |  69 kB     00:00    
+(8/32): podman-catatonit-2.2.1-7.module_el8.3.0+699+d61d9c41.x86_64.rpm                                                               13 MB/s | 310 kB     00:00    
+(9/32): protobuf-c-1.3.0-4.el8.x86_64.rpm                                                                                            7.8 MB/s |  37 kB     00:00    
+(10/32): podman-2.2.1-7.module_el8.3.0+699+d61d9c41.x86_64.rpm                                                                        46 MB/s |  14 MB     00:00    
+(11/32): slirp4netns-1.1.8-1.module_el8.3.0+699+d61d9c41.x86_64.rpm                                                                  9.0 MB/s |  51 kB     00:00    
+(12/32): runc-1.0.0-70.rc92.module_el8.3.0+699+d61d9c41.x86_64.rpm                                                                    13 MB/s | 3.7 MB     00:00    
+(13/32): dnf-plugin-subscription-manager-1.27.16-1.el8.x86_64.rpm                                                                     15 MB/s | 288 kB     00:00    
+(14/32): checkpolicy-2.9-1.el8.x86_64.rpm                                                                                            8.8 MB/s | 348 kB     00:00    
+(15/32): containernetworking-plugins-0.9.0-1.module_el8.3.0+699+d61d9c41.x86_64.rpm                                                   41 MB/s |  23 MB     00:00    
+(16/32): fuse-common-3.2.1-12.el8.x86_64.rpm                                                                                          35 kB/s |  21 kB     00:00    
+(17/32): fuse3-3.2.1-12.el8.x86_64.rpm                                                                                                83 kB/s |  50 kB     00:00    
+(18/32): libvarlink-18-3.el8.x86_64.rpm                                                                                              5.7 MB/s |  44 kB     00:00    
+(19/32): fuse3-libs-3.2.1-12.el8.x86_64.rpm                                                                                          211 kB/s |  94 kB     00:00    
+(20/32): python3-audit-3.0-0.17.20191104git1c2f876.el8.x86_64.rpm                                                                    6.1 MB/s |  86 kB     00:00    
+(21/32): python3-ethtool-0.14-3.el8.x86_64.rpm                                                                                       3.2 MB/s |  45 kB     00:00    
+(22/32): policycoreutils-python-utils-2.9-9.el8.noarch.rpm                                                                           6.5 MB/s | 251 kB     00:00    
+(23/32): python3-iniparse-0.4-31.el8.noarch.rpm                                                                                      2.4 MB/s |  49 kB     00:00    
+(24/32): python3-inotify-0.9.6-13.el8.noarch.rpm                                                                                     2.7 MB/s |  57 kB     00:00    
+(25/32): python3-librepo-1.12.0-2.el8.x86_64.rpm                                                                                      11 MB/s |  52 kB     00:00    
+(26/32): python3-libsemanage-2.9-3.el8.x86_64.rpm                                                                                     16 MB/s | 127 kB     00:00    
+(27/32): python3-subscription-manager-rhsm-1.27.16-1.el8.x86_64.rpm                                                                   23 MB/s | 360 kB     00:00    
+(28/32): python3-setools-4.3.0-2.el8.x86_64.rpm                                                                                       20 MB/s | 626 kB     00:00    
+(29/32): subscription-manager-rhsm-certificates-1.27.16-1.el8.x86_64.rpm                                                              19 MB/s | 256 kB     00:00    
+(30/32): usermode-1.113-1.el8.x86_64.rpm                                                                                              10 MB/s | 202 kB     00:00    
+(31/32): python3-policycoreutils-2.9-9.el8.noarch.rpm                                                                                 30 MB/s | 2.2 MB     00:00    
+(32/32): subscription-manager-1.27.16-1.el8.x86_64.rpm                                                                                19 MB/s | 1.1 MB     00:00    
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Total                                                                                                                                 11 MB/s |  47 MB     00:04     
+Running transaction check
+Transaction check succeeded.
+Running transaction test
+Transaction test succeeded.
+Running transaction
+  Preparing        :                                                                                                                                             1/1 
+  Installing       : python3-iniparse-0.4-31.el8.noarch                                                                                                         1/32 
+  Installing       : usermode-1.113-1.el8.x86_64                                                                                                                2/32 
+  Installing       : subscription-manager-rhsm-certificates-1.27.16-1.el8.x86_64                                                                                3/32 
+  Installing       : python3-subscription-manager-rhsm-1.27.16-1.el8.x86_64                                                                                     4/32 
+  Installing       : python3-setools-4.3.0-2.el8.x86_64                                                                                                         5/32 
+  Installing       : python3-libsemanage-2.9-3.el8.x86_64                                                                                                       6/32 
+  Installing       : python3-librepo-1.12.0-2.el8.x86_64                                                                                                        7/32 
+  Installing       : dnf-plugin-subscription-manager-1.27.16-1.el8.x86_64                                                                                       8/32 
+  Installing       : python3-inotify-0.9.6-13.el8.noarch                                                                                                        9/32 
+  Installing       : python3-ethtool-0.14-3.el8.x86_64                                                                                                         10/32 
+  Installing       : subscription-manager-1.27.16-1.el8.x86_64                                                                                                 11/32 
+  Running scriptlet: subscription-manager-1.27.16-1.el8.x86_64                                                                                                 11/32 
+  Installing       : python3-audit-3.0-0.17.20191104git1c2f876.el8.x86_64                                                                                      12/32 
+  Installing       : libvarlink-18-3.el8.x86_64                                                                                                                13/32 
+  Running scriptlet: libvarlink-18-3.el8.x86_64                                                                                                                13/32 
+  Installing       : fuse3-libs-3.2.1-12.el8.x86_64                                                                                                            14/32 
+  Running scriptlet: fuse3-libs-3.2.1-12.el8.x86_64                                                                                                            14/32 
+  Installing       : fuse-common-3.2.1-12.el8.x86_64                                                                                                           15/32 
+  Installing       : fuse3-3.2.1-12.el8.x86_64                                                                                                                 16/32 
+  Installing       : fuse-overlayfs-1.3.0-2.module_el8.3.0+699+d61d9c41.x86_64                                                                                 17/32 
+  Running scriptlet: fuse-overlayfs-1.3.0-2.module_el8.3.0+699+d61d9c41.x86_64                                                                                 17/32 
+  Installing       : checkpolicy-2.9-1.el8.x86_64                                                                                                              18/32 
+  Installing       : python3-policycoreutils-2.9-9.el8.noarch                                                                                                  19/32 
+  Installing       : policycoreutils-python-utils-2.9-9.el8.noarch                                                                                             20/32 
+  Running scriptlet: container-selinux-2:2.155.0-1.module_el8.3.0+699+d61d9c41.noarch                                                                          21/32 
+  Installing       : container-selinux-2:2.155.0-1.module_el8.3.0+699+d61d9c41.noarch                                                                          21/32 
+  Running scriptlet: container-selinux-2:2.155.0-1.module_el8.3.0+699+d61d9c41.noarch                                                                          21/32 
+  Installing       : protobuf-c-1.3.0-4.el8.x86_64                                                                                                             22/32 
+  Installing       : libslirp-4.3.1-1.module_el8.3.0+475+c50ce30b.x86_64                                                                                       23/32 
+  Installing       : slirp4netns-1.1.8-1.module_el8.3.0+699+d61d9c41.x86_64                                                                                    24/32 
+  Installing       : containers-common-1:1.2.0-9.module_el8.3.0+699+d61d9c41.x86_64                                                                            25/32 
+  Installing       : libnet-1.1.6-15.el8.x86_64                                                                                                                26/32 
+  Running scriptlet: libnet-1.1.6-15.el8.x86_64                                                                                                                26/32 
+  Installing       : criu-3.15-1.module_el8.3.0+699+d61d9c41.x86_64                                                                                            27/32 
+  Installing       : runc-1.0.0-70.rc92.module_el8.3.0+699+d61d9c41.x86_64                                                                                     28/32 
+  Installing       : containernetworking-plugins-0.9.0-1.module_el8.3.0+699+d61d9c41.x86_64                                                                    29/32 
+  Installing       : conmon-2:2.0.22-3.module_el8.3.0+699+d61d9c41.x86_64                                                                                      30/32 
+  Installing       : podman-catatonit-2.2.1-7.module_el8.3.0+699+d61d9c41.x86_64                                                                               31/32 
+  Installing       : podman-2.2.1-7.module_el8.3.0+699+d61d9c41.x86_64                                                                                         32/32 
+  Running scriptlet: container-selinux-2:2.155.0-1.module_el8.3.0+699+d61d9c41.noarch                                                                          32/32 
+  Running scriptlet: podman-2.2.1-7.module_el8.3.0+699+d61d9c41.x86_64                                                                                         32/32 
+  Verifying        : conmon-2:2.0.22-3.module_el8.3.0+699+d61d9c41.x86_64                                                                                       1/32 
+  Verifying        : container-selinux-2:2.155.0-1.module_el8.3.0+699+d61d9c41.noarch                                                                           2/32 
+  Verifying        : containernetworking-plugins-0.9.0-1.module_el8.3.0+699+d61d9c41.x86_64                                                                     3/32 
+  Verifying        : containers-common-1:1.2.0-9.module_el8.3.0+699+d61d9c41.x86_64                                                                             4/32 
+  Verifying        : criu-3.15-1.module_el8.3.0+699+d61d9c41.x86_64                                                                                             5/32 
+  Verifying        : fuse-overlayfs-1.3.0-2.module_el8.3.0+699+d61d9c41.x86_64                                                                                  6/32 
+  Verifying        : libnet-1.1.6-15.el8.x86_64                                                                                                                 7/32 
+  Verifying        : libslirp-4.3.1-1.module_el8.3.0+475+c50ce30b.x86_64                                                                                        8/32 
+  Verifying        : podman-2.2.1-7.module_el8.3.0+699+d61d9c41.x86_64                                                                                          9/32 
+  Verifying        : podman-catatonit-2.2.1-7.module_el8.3.0+699+d61d9c41.x86_64                                                                               10/32 
+  Verifying        : protobuf-c-1.3.0-4.el8.x86_64                                                                                                             11/32 
+  Verifying        : runc-1.0.0-70.rc92.module_el8.3.0+699+d61d9c41.x86_64                                                                                     12/32 
+  Verifying        : slirp4netns-1.1.8-1.module_el8.3.0+699+d61d9c41.x86_64                                                                                    13/32 
+  Verifying        : checkpolicy-2.9-1.el8.x86_64                                                                                                              14/32 
+  Verifying        : dnf-plugin-subscription-manager-1.27.16-1.el8.x86_64                                                                                      15/32 
+  Verifying        : fuse-common-3.2.1-12.el8.x86_64                                                                                                           16/32 
+  Verifying        : fuse3-3.2.1-12.el8.x86_64                                                                                                                 17/32 
+  Verifying        : fuse3-libs-3.2.1-12.el8.x86_64                                                                                                            18/32 
+  Verifying        : libvarlink-18-3.el8.x86_64                                                                                                                19/32 
+  Verifying        : policycoreutils-python-utils-2.9-9.el8.noarch                                                                                             20/32 
+  Verifying        : python3-audit-3.0-0.17.20191104git1c2f876.el8.x86_64                                                                                      21/32 
+  Verifying        : python3-ethtool-0.14-3.el8.x86_64                                                                                                         22/32 
+  Verifying        : python3-iniparse-0.4-31.el8.noarch                                                                                                        23/32 
+  Verifying        : python3-inotify-0.9.6-13.el8.noarch                                                                                                       24/32 
+  Verifying        : python3-librepo-1.12.0-2.el8.x86_64                                                                                                       25/32 
+  Verifying        : python3-libsemanage-2.9-3.el8.x86_64                                                                                                      26/32 
+  Verifying        : python3-policycoreutils-2.9-9.el8.noarch                                                                                                  27/32 
+  Verifying        : python3-setools-4.3.0-2.el8.x86_64                                                                                                        28/32 
+  Verifying        : python3-subscription-manager-rhsm-1.27.16-1.el8.x86_64                                                                                    29/32 
+  Verifying        : subscription-manager-1.27.16-1.el8.x86_64                                                                                                 30/32 
+  Verifying        : subscription-manager-rhsm-certificates-1.27.16-1.el8.x86_64                                                                               31/32 
+  Verifying        : usermode-1.113-1.el8.x86_64                                                                                                               32/32 
+
+Installed:
+  checkpolicy-2.9-1.el8.x86_64                                                   conmon-2:2.0.22-3.module_el8.3.0+699+d61d9c41.x86_64                                
+  container-selinux-2:2.155.0-1.module_el8.3.0+699+d61d9c41.noarch               containernetworking-plugins-0.9.0-1.module_el8.3.0+699+d61d9c41.x86_64              
+  containers-common-1:1.2.0-9.module_el8.3.0+699+d61d9c41.x86_64                 criu-3.15-1.module_el8.3.0+699+d61d9c41.x86_64                                      
+  dnf-plugin-subscription-manager-1.27.16-1.el8.x86_64                           fuse-common-3.2.1-12.el8.x86_64                                                     
+  fuse-overlayfs-1.3.0-2.module_el8.3.0+699+d61d9c41.x86_64                      fuse3-3.2.1-12.el8.x86_64                                                           
+  fuse3-libs-3.2.1-12.el8.x86_64                                                 libnet-1.1.6-15.el8.x86_64                                                          
+  libslirp-4.3.1-1.module_el8.3.0+475+c50ce30b.x86_64                            libvarlink-18-3.el8.x86_64                                                          
+  podman-2.2.1-7.module_el8.3.0+699+d61d9c41.x86_64                              podman-catatonit-2.2.1-7.module_el8.3.0+699+d61d9c41.x86_64                         
+  policycoreutils-python-utils-2.9-9.el8.noarch                                  protobuf-c-1.3.0-4.el8.x86_64                                                       
+  python3-audit-3.0-0.17.20191104git1c2f876.el8.x86_64                           python3-ethtool-0.14-3.el8.x86_64                                                   
+  python3-iniparse-0.4-31.el8.noarch                                             python3-inotify-0.9.6-13.el8.noarch                                                 
+  python3-librepo-1.12.0-2.el8.x86_64                                            python3-libsemanage-2.9-3.el8.x86_64                                                
+  python3-policycoreutils-2.9-9.el8.noarch                                       python3-setools-4.3.0-2.el8.x86_64                                                  
+  python3-subscription-manager-rhsm-1.27.16-1.el8.x86_64                         runc-1.0.0-70.rc92.module_el8.3.0+699+d61d9c41.x86_64                               
+  slirp4netns-1.1.8-1.module_el8.3.0+699+d61d9c41.x86_64                         subscription-manager-1.27.16-1.el8.x86_64                                           
+  subscription-manager-rhsm-certificates-1.27.16-1.el8.x86_64                    usermode-1.113-1.el8.x86_64                                                         
+
+Complete!
+# 
+
+# 
+
+# rpm -qa|grep podman
+podman-2.2.1-7.module_el8.3.0+699+d61d9c41.x86_64
+podman-catatonit-2.2.1-7.module_el8.3.0+699+d61d9c41.x86_64
+
+# rpm -ql podman
+/etc/cni/net.d/87-podman-bridge.conflist
+
+/usr/bin/podman
+/usr/lib/.build-id
+/usr/lib/.build-id/36
+/usr/lib/.build-id/36/0d66d196bd950351de0de46fd1d7124639dc03
+
+/usr/lib/systemd/system/io.podman.service
+/usr/lib/systemd/system/io.podman.socket
+/usr/lib/systemd/system/podman-auto-update.service
+/usr/lib/systemd/system/podman-auto-update.timer
+/usr/lib/systemd/system/podman.service
+/usr/lib/systemd/system/podman.socket
+
+/usr/lib/systemd/user/io.podman.service
+/usr/lib/systemd/user/io.podman.socket
+/usr/lib/systemd/user/podman-auto-update.service
+/usr/lib/systemd/user/podman-auto-update.timer
+/usr/lib/systemd/user/podman.service
+/usr/lib/systemd/user/podman.socket
+
+
+/usr/lib/tmpfiles.d/podman.conf
+/usr/share/bash-completion/completions/podman
+/usr/share/doc/podman
+/usr/share/doc/podman/CONTRIBUTING.md
+/usr/share/doc/podman/README-hooks.md
+/usr/share/doc/podman/README.md
+/usr/share/doc/podman/install.md
+/usr/share/doc/podman/transfer.md
+/usr/share/fish/vendor_completions.d
+/usr/share/fish/vendor_completions.d/podman.fish
+/usr/share/licenses/podman
+/usr/share/licenses/podman/LICENSE
+/usr/share/man/man1/podman-attach.1.gz
+/usr/share/man/man1/podman-auto-update.1.gz
+/usr/share/man/man1/podman-build.1.gz
+/usr/share/man/man1/podman-commit.1.gz
+/usr/share/man/man1/podman-completion.1.gz
+/usr/share/man/man1/podman-container-attach.1.gz
+/usr/share/man/man1/podman-container-checkpoint.1.gz
+/usr/share/man/man1/podman-container-cleanup.1.gz
+/usr/share/man/man1/podman-container-commit.1.gz
+/usr/share/man/man1/podman-container-cp.1.gz
+/usr/share/man/man1/podman-container-create.1.gz
+/usr/share/man/man1/podman-container-diff.1.gz
+/usr/share/man/man1/podman-container-exec.1.gz
+/usr/share/man/man1/podman-container-exists.1.gz
+/usr/share/man/man1/podman-container-export.1.gz
+/usr/share/man/man1/podman-container-init.1.gz
+/usr/share/man/man1/podman-container-inspect.1.gz
+/usr/share/man/man1/podman-container-kill.1.gz
+/usr/share/man/man1/podman-container-list.1.gz
+/usr/share/man/man1/podman-container-logs.1.gz
+/usr/share/man/man1/podman-container-ls.1.gz
+/usr/share/man/man1/podman-container-mount.1.gz
+/usr/share/man/man1/podman-container-pause.1.gz
+/usr/share/man/man1/podman-container-port.1.gz
+/usr/share/man/man1/podman-container-prune.1.gz
+/usr/share/man/man1/podman-container-ps.1.gz
+/usr/share/man/man1/podman-container-restart.1.gz
+/usr/share/man/man1/podman-container-restore.1.gz
+/usr/share/man/man1/podman-container-rm.1.gz
+/usr/share/man/man1/podman-container-run.1.gz
+/usr/share/man/man1/podman-container-runlabel.1.gz
+/usr/share/man/man1/podman-container-start.1.gz
+/usr/share/man/man1/podman-container-stats.1.gz
+/usr/share/man/man1/podman-container-stop.1.gz
+/usr/share/man/man1/podman-container-top.1.gz
+/usr/share/man/man1/podman-container-umount.1.gz
+/usr/share/man/man1/podman-container-unmount.1.gz
+/usr/share/man/man1/podman-container-unpause.1.gz
+/usr/share/man/man1/podman-container-wait.1.gz
+/usr/share/man/man1/podman-container.1.gz
+/usr/share/man/man1/podman-cp.1.gz
+/usr/share/man/man1/podman-create.1.gz
+/usr/share/man/man1/podman-diff.1.gz
+/usr/share/man/man1/podman-events.1.gz
+/usr/share/man/man1/podman-exec.1.gz
+/usr/share/man/man1/podman-export.1.gz
+/usr/share/man/man1/podman-generate-kube.1.gz
+/usr/share/man/man1/podman-generate-systemd.1.gz
+/usr/share/man/man1/podman-generate.1.gz
+/usr/share/man/man1/podman-healthcheck-run.1.gz
+/usr/share/man/man1/podman-healthcheck.1.gz
+/usr/share/man/man1/podman-help.1.gz
+/usr/share/man/man1/podman-history.1.gz
+/usr/share/man/man1/podman-image-build.1.gz
+/usr/share/man/man1/podman-image-diff.1.gz
+/usr/share/man/man1/podman-image-exists.1.gz
+/usr/share/man/man1/podman-image-history.1.gz
+/usr/share/man/man1/podman-image-import.1.gz
+/usr/share/man/man1/podman-image-inspect.1.gz
+/usr/share/man/man1/podman-image-list.1.gz
+/usr/share/man/man1/podman-image-load.1.gz
+/usr/share/man/man1/podman-image-ls.1.gz
+/usr/share/man/man1/podman-image-mount.1.gz
+/usr/share/man/man1/podman-image-prune.1.gz
+/usr/share/man/man1/podman-image-pull.1.gz
+/usr/share/man/man1/podman-image-push.1.gz
+/usr/share/man/man1/podman-image-rm.1.gz
+/usr/share/man/man1/podman-image-save.1.gz
+/usr/share/man/man1/podman-image-search.1.gz
+/usr/share/man/man1/podman-image-sign.1.gz
+/usr/share/man/man1/podman-image-tag.1.gz
+/usr/share/man/man1/podman-image-tree.1.gz
+/usr/share/man/man1/podman-image-trust.1.gz
+/usr/share/man/man1/podman-image-umount.1.gz
+/usr/share/man/man1/podman-image-unmount.1.gz
+/usr/share/man/man1/podman-image-untag.1.gz
+/usr/share/man/man1/podman-image.1.gz
+/usr/share/man/man1/podman-images.1.gz
+/usr/share/man/man1/podman-import.1.gz
+/usr/share/man/man1/podman-info.1.gz
+/usr/share/man/man1/podman-init.1.gz
+/usr/share/man/man1/podman-inspect.1.gz
+/usr/share/man/man1/podman-kill.1.gz
+/usr/share/man/man1/podman-load.1.gz
+/usr/share/man/man1/podman-login.1.gz
+/usr/share/man/man1/podman-logout.1.gz
+/usr/share/man/man1/podman-logs.1.gz
+/usr/share/man/man1/podman-manifest-add.1.gz
+/usr/share/man/man1/podman-manifest-annotate.1.gz
+/usr/share/man/man1/podman-manifest-create.1.gz
+/usr/share/man/man1/podman-manifest-inspect.1.gz
+/usr/share/man/man1/podman-manifest-push.1.gz
+/usr/share/man/man1/podman-manifest-remove.1.gz
+/usr/share/man/man1/podman-manifest.1.gz
+/usr/share/man/man1/podman-mount.1.gz
+/usr/share/man/man1/podman-network-connect.1.gz
+/usr/share/man/man1/podman-network-create.1.gz
+/usr/share/man/man1/podman-network-disconnect.1.gz
+/usr/share/man/man1/podman-network-inspect.1.gz
+/usr/share/man/man1/podman-network-ls.1.gz
+/usr/share/man/man1/podman-network-rm.1.gz
+/usr/share/man/man1/podman-network.1.gz
+/usr/share/man/man1/podman-pause.1.gz
+/usr/share/man/man1/podman-play-kube.1.gz
+/usr/share/man/man1/podman-play.1.gz
+/usr/share/man/man1/podman-pod-create.1.gz
+/usr/share/man/man1/podman-pod-exists.1.gz
+/usr/share/man/man1/podman-pod-inspect.1.gz
+/usr/share/man/man1/podman-pod-kill.1.gz
+/usr/share/man/man1/podman-pod-pause.1.gz
+/usr/share/man/man1/podman-pod-prune.1.gz
+/usr/share/man/man1/podman-pod-ps.1.gz
+/usr/share/man/man1/podman-pod-restart.1.gz
+/usr/share/man/man1/podman-pod-rm.1.gz
+/usr/share/man/man1/podman-pod-start.1.gz
+/usr/share/man/man1/podman-pod-stats.1.gz
+/usr/share/man/man1/podman-pod-stop.1.gz
+/usr/share/man/man1/podman-pod-top.1.gz
+/usr/share/man/man1/podman-pod-unpause.1.gz
+/usr/share/man/man1/podman-pod.1.gz
+/usr/share/man/man1/podman-port.1.gz
+/usr/share/man/man1/podman-ps.1.gz
+/usr/share/man/man1/podman-pull.1.gz
+/usr/share/man/man1/podman-push.1.gz
+/usr/share/man/man1/podman-restart.1.gz
+/usr/share/man/man1/podman-rm.1.gz
+/usr/share/man/man1/podman-rmi.1.gz
+/usr/share/man/man1/podman-run.1.gz
+/usr/share/man/man1/podman-save.1.gz
+/usr/share/man/man1/podman-search.1.gz
+/usr/share/man/man1/podman-start.1.gz
+/usr/share/man/man1/podman-stats.1.gz
+/usr/share/man/man1/podman-stop.1.gz
+/usr/share/man/man1/podman-system-connection-add.1.gz
+/usr/share/man/man1/podman-system-connection-default.1.gz
+/usr/share/man/man1/podman-system-connection-list.1.gz
+/usr/share/man/man1/podman-system-connection-remove.1.gz
+/usr/share/man/man1/podman-system-connection-rename.1.gz
+/usr/share/man/man1/podman-system-connection.1.gz
+/usr/share/man/man1/podman-system-df.1.gz
+/usr/share/man/man1/podman-system-info.1.gz
+/usr/share/man/man1/podman-system-migrate.1.gz
+/usr/share/man/man1/podman-system-prune.1.gz
+/usr/share/man/man1/podman-system-renumber.1.gz
+/usr/share/man/man1/podman-system-reset.1.gz
+/usr/share/man/man1/podman-system-service.1.gz
+/usr/share/man/man1/podman-system.1.gz
+/usr/share/man/man1/podman-tag.1.gz
+/usr/share/man/man1/podman-top.1.gz
+/usr/share/man/man1/podman-umount.1.gz
+/usr/share/man/man1/podman-unmount.1.gz
+/usr/share/man/man1/podman-unpause.1.gz
+/usr/share/man/man1/podman-unshare.1.gz
+/usr/share/man/man1/podman-untag.1.gz
+/usr/share/man/man1/podman-version.1.gz
+/usr/share/man/man1/podman-volume-create.1.gz
+/usr/share/man/man1/podman-volume-inspect.1.gz
+/usr/share/man/man1/podman-volume-ls.1.gz
+/usr/share/man/man1/podman-volume-prune.1.gz
+/usr/share/man/man1/podman-volume-rm.1.gz
+/usr/share/man/man1/podman-volume.1.gz
+/usr/share/man/man1/podman-wait.1.gz
+/usr/share/man/man1/podman.1.gz
+/usr/share/man/man5/oci-hooks.5.gz
+/usr/share/zsh/site-functions
+/usr/share/zsh/site-functions/_podman
+
+# rpm -ql podman-catatonit
+/usr/lib/.build-id
+/usr/lib/.build-id/23
+/usr/lib/.build-id/23/9e3ac88381c3f7e4a853c5b242f814a18b741d
+/usr/libexec/catatonit
+/usr/libexec/catatonit/catatonit
+/usr/libexec/podman
+/usr/libexec/podman/catatonit
+/usr/share/doc/podman-catatonit
+/usr/share/doc/podman-catatonit/README.md
+/usr/share/licenses/podman-catatonit
+/usr/share/licenses/podman-catatonit/COPYING
+# 
+
+# rpm -qa|grep container
+container-selinux-2.155.0-1.module_el8.3.0+699+d61d9c41.noarch
+containers-common-1.2.0-9.module_el8.3.0+699+d61d9c41.x86_64
+containernetworking-plugins-0.9.0-1.module_el8.3.0+699+d61d9c41.x86_64
+
+# rpm -ql containers-common
+/etc/containers
+/etc/containers/certs.d
+/etc/containers/containers.conf
+
+/etc/containers/oci
+/etc/containers/oci/hooks.d
+/etc/containers/policy.json
+/etc/containers/registries.conf
+/etc/containers/registries.d
+/etc/containers/registries.d/default.yaml
+/etc/containers/storage.conf
+/usr/share/containers
+/usr/share/containers/containers.conf
+/usr/share/containers/mounts.conf
+/usr/share/containers/seccomp.json
+/usr/share/man/man5/containers-auth.json.5.gz
+/usr/share/man/man5/containers-certs.d.5.gz
+/usr/share/man/man5/containers-mounts.conf.5.gz
+/usr/share/man/man5/containers-policy.json.5.gz
+/usr/share/man/man5/containers-registries.conf.5.gz
+/usr/share/man/man5/containers-registries.conf.d.5.gz
+/usr/share/man/man5/containers-registries.d.5.gz
+/usr/share/man/man5/containers-signature.5.gz
+/usr/share/man/man5/containers-storage.conf.5.gz
+/usr/share/man/man5/containers-transports.5.gz
+/usr/share/man/man5/containers.conf.5.gz
+/usr/share/rhel/secrets
+/usr/share/rhel/secrets/etc-pki-entitlement
+/usr/share/rhel/secrets/redhat.repo
+/usr/share/rhel/secrets/rhsm
+/var/lib/containers/sigstore
+# rpm -ql containernetworking-plugins
+/usr/lib/.build-id
+/usr/lib/.build-id/0c
+/usr/lib/.build-id/0c/cf1cd3278cabb67d5430e1f03e7bd45267b2f4
+/usr/lib/.build-id/16
+/usr/lib/.build-id/16/4bf7862500511380e3cd056b193b42704aa46c
+/usr/lib/.build-id/38
+/usr/lib/.build-id/38/04e1aae4ffb87fa12c4037991276dcc67aa2ee
+/usr/lib/.build-id/39
+/usr/lib/.build-id/39/afb91b81e707f584fcccef57e205ce8c64013d
+/usr/lib/.build-id/3d
+/usr/lib/.build-id/3d/9f36405823b39ce366e57127909436f8db77fd
+/usr/lib/.build-id/3d/b6e621bd7d84345dbdd3924d4084e4f938e03d
+/usr/lib/.build-id/46
+/usr/lib/.build-id/46/0911d8796a61bcdbb558f09d165c007b8d242b
+/usr/lib/.build-id/52
+/usr/lib/.build-id/52/69be1e26a61acb76270295479e2b2cf5c310c5
+/usr/lib/.build-id/8e
+/usr/lib/.build-id/8e/143b9f23221720d3b9b785f14deeb8a0e2971d
+/usr/lib/.build-id/93
+/usr/lib/.build-id/93/e006daf1d64e4468054a64192164cb8034d890
+/usr/lib/.build-id/9c
+/usr/lib/.build-id/9c/268d9700c670b607f75c1871b62908a5561c72
+/usr/lib/.build-id/b4
+/usr/lib/.build-id/b4/b7ce6625f0915bb9d8f8b4e8f828da7dc625ee
+/usr/lib/.build-id/c2
+/usr/lib/.build-id/c2/ca465a7ff607b52cca57ec227022763f00305d
+/usr/lib/.build-id/cd
+/usr/lib/.build-id/cd/9ffe8f2267fcf09abc668e502f80545a1b98b0
+/usr/lib/.build-id/d6
+/usr/lib/.build-id/d6/0964354cb006a2b8589ae2199b266c0c5c130d
+/usr/lib/.build-id/d7
+/usr/lib/.build-id/d7/4c6913139f6dae0ca440abad7ca3f46a6b3ca1
+/usr/lib/.build-id/e1
+/usr/lib/.build-id/e1/a6f68e295d35f8a68f02a5ddc1f61f90e9fd7f
+/usr/lib/.build-id/e2
+/usr/lib/.build-id/e2/764c6eccf83f244656563cdf3677c1bb2e20e7
+/usr/libexec/cni
+/usr/libexec/cni/bandwidth
+/usr/libexec/cni/bridge
+/usr/libexec/cni/dhcp
+/usr/libexec/cni/firewall
+/usr/libexec/cni/flannel
+/usr/libexec/cni/host-device
+/usr/libexec/cni/host-local
+/usr/libexec/cni/ipvlan
+/usr/libexec/cni/loopback
+/usr/libexec/cni/macvlan
+/usr/libexec/cni/portmap
+/usr/libexec/cni/ptp
+/usr/libexec/cni/sample
+/usr/libexec/cni/sbr
+/usr/libexec/cni/static
+/usr/libexec/cni/tuning
+/usr/libexec/cni/vlan
+/usr/libexec/cni/vrf
+/usr/share/doc/containernetworking-plugins
+/usr/share/doc/containernetworking-plugins/CONTRIBUTING.md
+/usr/share/doc/containernetworking-plugins/OWNERS.md
+/usr/share/doc/containernetworking-plugins/README.md
+/usr/share/doc/containernetworking-plugins/RELEASING.md
+/usr/share/licenses/containernetworking-plugins
+/usr/share/licenses/containernetworking-plugins/LICENSE
+# rpm -ql container-selinux
+/usr/share/containers/selinux
+/usr/share/containers/selinux/contexts
+/usr/share/doc/container-selinux
+/usr/share/doc/container-selinux/README.md
+/usr/share/selinux/devel
+/usr/share/selinux/devel/include
+/usr/share/selinux/devel/include/services
+/usr/share/selinux/devel/include/services/container.if
+/usr/share/selinux/packages
+/usr/share/selinux/packages/container.pp.bz2
+
+# 
+# pwd
+/etc/containers
+# ls
+certs.d  oci  policy.json  registries.conf  registries.d  storage.conf
+# tree
+.
+|-- certs.d
+|-- oci
+|   `-- hooks.d
+|-- policy.json
+|-- registries.conf
+|-- registries.d
+|   `-- default.yaml
+`-- storage.conf
+
+4 directories, 4 files
+# more *
+
+*** certs.d: directory ***
+
+
+*** oci: directory ***
+
+::::::::::::::
+policy.json
+::::::::::::::
+{
+    "default": [
+        {
+            "type": "insecureAcceptAnything"
+        }
+    ],
+    "transports":
+        {
+            "docker-daemon":
+                {
+                    "": [{"type":"insecureAcceptAnything"}]
+                }
+        }
+}
+::::::::::::::
+registries.conf
+::::::::::::::
+# For more information on this configuration file, see containers-registries.conf(5).
+#
+# There are multiple versions of the configuration syntax available, where the
+# second iteration is backwards compatible to the first one. Mixing up both
+# formats will result in an runtime error.
+#
+# The initial configuration format looks like this:
+#
+# NOTE: RISK OF USING UNQUALIFIED IMAGE NAMES
+# Red Hat recommends always using fully qualified image names including the registry server (full dns name),
+# namespace, image name, and tag (ex. registry.redhat.io/ubi8/ubu:latest). When using short names, there is
+# always an inherent risk that the image being pulled could be spoofed. For example, a user wants to.
+# pull an image named `foobar` from a registry and expects it to come from myregistry.com. If myregistry.com
+# is not first in the search list, an attacker could place a different `foobar` image at a registry earlier
+# in the search list. The user would accidentally pull and run the attacker's image and code rather than the
+# intended content. Red Hat recommends only adding registries which are completely trusted, i.e. registries
+# which don't allow unknown or anonymous users to create accounts with arbitrary names. This will prevent
+# an image from being spoofed, squatted or otherwise made insecure.  If it is necessary to use one of these
+# registries, it should be added at the end of the list.
+#
+# It is recommended to use fully-qualified images for pulling as the
+# destination registry is unambiguous. Pulling by digest
+# (i.e., quay.io/repository/name@digest) further eliminates the ambiguity of
+# tags.
+
+# The following registries are a set of secure defaults provided by Red Hat.
+# Each of these registries provides container images curated, patched
+# and maintained by Red Hat and its partners
+#[registries.search]
+#registries = ['registry.access.redhat.com', 'registry.redhat.io']
+
+# To ensure compatibility with docker we've included docker.io in the default search list. However Red Hat
+# does not curate, patch or maintain container images from the docker.io registry.
+[registries.search]
+registries = ['registry.access.redhat.com', 'registry.redhat.io', 'docker.io']
+
+# The following registries entry can be used for convenience but includes
+# container images built by the community. This set of content comes with all
+# of the risks of any user generated content including security and performance
+# issues. To use this list first comment out the default list, then uncomment
+# the following list
+#[registries.search]
+#registries = ['registry.access.redhat.com', 'registry.redhat.io', 'docker.io', 'quay.io']
+
+# Registries that do not use TLS when pulling images or uses self-signed
+# certificates.
+[registries.insecure]
+registries = []
+
+# Blocked Registries, blocks the `docker daemon` from pulling from the blocked registry.  If you specify
+# "*", then the docker daemon will only be allowed to pull from registries listed above in the search
+# registries.  Blocked Registries is deprecated because other container runtimes and tools will not use it.
+# It is recommended that you use the trust policy file /etc/containers/policy.json to control which
+# registries you want to allow users to pull and push from.  policy.json gives greater flexibility, and
+# supports all container runtimes and tools including the docker daemon, cri-o, buildah ...
+# The atomic CLI `atomic trust` can be used to easily configure the policy.json file.
+[registries.block]
+registries = []
+
+# The second version of the configuration format allows to specify registry
+# mirrors:
+#
+# # An array of host[:port] registries to try when pulling an unqualified image, in order.
+unqualified-search-registries = ["registry.fedoraproject.org", "registry.access.redhat.com", "registry.centos.org", "docker.io"]
+#
+# [[registry]]
+# # The "prefix" field is used to choose the relevant [[registry]] TOML table;
+# # (only) the TOML table with the longest match for the input image name
+# # (taking into account namespace/repo/tag/digest separators) is used.
+# #
+# # If the prefix field is missing, it defaults to be the same as the "location" field.
+# prefix = "example.com/foo"
+#
+# # If true, unencrypted HTTP as well as TLS connections with untrusted
+# # certificates are allowed.
+# insecure = false
+#
+# # If true, pulling images with matching names is forbidden.
+# blocked = false
+#
+# # The physical location of the "prefix"-rooted namespace.
+# #
+# # By default, this equal to "prefix" (in which case "prefix" can be omitted
+# # and the [[registry]] TOML table can only specify "location").
+# #
+# # Example: Given
+# #   prefix = "example.com/foo"
+# #   location = "internal-registry-for-example.net/bar"
+# # requests for the image example.com/foo/myimage:latest will actually work with the
+# # internal-registry-for-example.net/bar/myimage:latest image.
+# location = internal-registry-for-example.com/bar"
+#
+# # (Possibly-partial) mirrors for the "prefix"-rooted namespace.
+# #
+# # The mirrors are attempted in the specified order; the first one that can be
+# # contacted and contains the image will be used (and if none of the mirrors contains the image,
+# # the primary location specified by the "registry.location" field, or using the unmodified
+# # user-specified reference, is tried last).
+# #
+# # Each TOML table in the "mirror" array can contain the following fields, with the same semantics
+# # as if specified in the [[registry]] TOML table directly:
+# # - location
+# # - insecure
+# [[registry.mirror]]
+# location = "example-mirror-0.local/mirror-for-foo"
+# [[registry.mirror]]
+# location = "example-mirror-1.local/mirrors/foo"
+# insecure = true
+# # Given the above, a pull of example.com/foo/image:latest will try:
+# # 1. example-mirror-0.local/mirror-for-foo/image:latest
+# # 2. example-mirror-1.local/mirrors/foo/image:latest
+# # 3. internal-registry-for-example.net/bar/myimage:latest
+# # in order, and use the first one that exists.
+
+*** registries.d: directory ***
+
+::::::::::::::
+storage.conf
+::::::::::::::
+# This file is is the configuration file for all tools
+# that use the containers/storage library.
+# See man 5 containers-storage.conf for more information
+# The "container storage" table contains all of the server options.
+[storage]
+
+# Default Storage Driver
+driver = "overlay"
+
+# Temporary storage location
+runroot = "/var/run/containers/storage"
+
+# Primary Read/Write location of container storage
+graphroot = "/var/lib/containers/storage"
+
+# Storage path for rootless users
+#
+# rootless_storage_path = "$HOME/.local/share/containers/storage"
+
+[storage.options]
+# Storage options to be passed to underlying storage drivers
+
+# AdditionalImageStores is used to pass paths to additional Read/Only image stores
+# Must be comma separated list.
+additionalimagestores = [
+]
+
+# Remap-UIDs/GIDs is the mapping from UIDs/GIDs as they should appear inside of
+# a container, to the UIDs/GIDs as they should appear outside of the container,
+# and the length of the range of UIDs/GIDs.  Additional mapped sets can be
+# listed and will be heeded by libraries, but there are limits to the number of
+# mappings which the kernel will allow when you later attempt to run a
+# container.
+#
+# remap-uids = 0:1668442479:65536
+# remap-gids = 0:1668442479:65536
+
+# Remap-User/Group is a user name which can be used to look up one or more UID/GID
+# ranges in the /etc/subuid or /etc/subgid file.  Mappings are set up starting
+# with an in-container ID of 0 and then a host-level ID taken from the lowest
+# range that matches the specified name, and using the length of that range.
+# Additional ranges are then assigned, using the ranges which specify the
+# lowest host-level IDs first, to the lowest not-yet-mapped in-container ID,
+# until all of the entries have been used for maps.
+#
+# remap-user = "containers"
+# remap-group = "containers"
+
+# Root-auto-userns-user is a user name which can be used to look up one or more UID/GID
+# ranges in the /etc/subuid and /etc/subgid file.  These ranges will be partitioned
+# to containers configured to create automatically a user namespace.  Containers
+# configured to automatically create a user namespace can still overlap with containers
+# having an explicit mapping set.
+# This setting is ignored when running as rootless.
+# root-auto-userns-user = "storage"
+#
+# Auto-userns-min-size is the minimum size for a user namespace created automatically.
+# auto-userns-min-size=1024
+#
+# Auto-userns-max-size is the minimum size for a user namespace created automatically.
+# auto-userns-max-size=65536
+
+[storage.options.overlay]
+# ignore_chown_errors can be set to allow a non privileged user running with
+# a single UID within a user namespace to run containers. The user can pull
+# and use any image even those with multiple uids.  Note multiple UIDs will be
+# squashed down to the default uid in the container.  These images will have no
+# separation between the users in the container. Only supported for the overlay
+# and vfs drivers.
+#ignore_chown_errors = "false"
+
+# Path to an helper program to use for mounting the file system instead of mounting it
+# directly.
+#mount_program = "/usr/bin/fuse-overlayfs"
+
+# mountopt specifies comma separated list of extra mount options
+mountopt = "nodev,metacopy=on"
+
+# Set to skip a PRIVATE bind mount on the storage home directory.
+# skip_mount_home = "false"
+
+# Size is used to set a maximum size of the container image.
+# size = ""
+
+# ForceMask specifies the permissions mask that is used for new files and
+# directories.
+#
+# The values "shared" and "private" are accepted.
+# Octal permission masks are also accepted.
+#
+#  "": No value specified.
+#     All files/directories, get set with the permissions identified within the
+#     image.
+#  "private": it is equivalent to 0700.
+#     All files/directories get set with 0700 permissions.  The owner has rwx
+#     access to the files. No other users on the system can access the files.
+#     This setting could be used with networked based homedirs.
+#  "shared": it is equivalent to 0755.
+#     The owner has rwx access to the files and everyone else can read, access
+#     and execute them. This setting is useful for sharing containers storage
+#     with other users.  For instance have a storage owned by root but shared
+#     to rootless users as an additional store.
+#     NOTE:  All files within the image are made readable and executable by any
+#     user on the system. Even /etc/shadow within your image is now readable by
+#     any user.
+#
+#   OCTAL: Users can experiment with other OCTAL Permissions.
+#
+#  Note: The force_mask Flag is an experimental feature, it could change in the
+#  future.  When "force_mask" is set the original permission mask is stored in
+#  the "user.containers.override_stat" xattr and the "mount_program" option must
+#  be specified. Mount programs like "/usr/bin/fuse-overlayfs" present the
+#  extended attribute permissions to processes within containers rather then the
+#  "force_mask"  permissions.
+#
+# force_mask = ""
+
+[storage.options.thinpool]
+# Storage Options for thinpool
+
+# autoextend_percent determines the amount by which pool needs to be
+# grown. This is specified in terms of % of pool size. So a value of 20 means
+# that when threshold is hit, pool will be grown by 20% of existing
+# pool size.
+# autoextend_percent = "20"
+
+# autoextend_threshold determines the pool extension threshold in terms
+# of percentage of pool size. For example, if threshold is 60, that means when
+# pool is 60% full, threshold has been hit.
+# autoextend_threshold = "80"
+
+# basesize specifies the size to use when creating the base device, which
+# limits the size of images and containers.
+# basesize = "10G"
+
+# blocksize specifies a custom blocksize to use for the thin pool.
+# blocksize="64k"
+
+# directlvm_device specifies a custom block storage device to use for the
+# thin pool. Required if you setup devicemapper.
+# directlvm_device = ""
+
+# directlvm_device_force wipes device even if device already has a filesystem.
+# directlvm_device_force = "True"
+
+# fs specifies the filesystem type to use for the base device.
+# fs="xfs"
+
+# log_level sets the log level of devicemapper.
+# 0: LogLevelSuppress 0 (Default)
+# 2: LogLevelFatal
+# 3: LogLevelErr
+# 4: LogLevelWarn
+# 5: LogLevelNotice
+# 6: LogLevelInfo
+# 7: LogLevelDebug
+# log_level = "7"
+
+# min_free_space specifies the min free space percent in a thin pool require for
+# new device creation to succeed. Valid values are from 0% - 99%.
+# Value 0% disables
+# min_free_space = "10%"
+
+# mkfsarg specifies extra mkfs arguments to be used when creating the base
+# device.
+# mkfsarg = ""
+
+# metadata_size is used to set the `pvcreate --metadatasize` options when
+# creating thin devices. Default is 128k
+# metadata_size = ""
+
+# Size is used to set a maximum size of the container image.
+# size = ""
+
+# use_deferred_removal marks devicemapper block device for deferred removal.
+# If the thinpool is in use when the driver attempts to remove it, the driver
+# tells the kernel to remove it as soon as possible. Note this does not free
+# up the disk space, use deferred deletion to fully remove the thinpool.
+# use_deferred_removal = "True"
+
+# use_deferred_deletion marks thinpool device for deferred deletion.
+# If the device is busy when the driver attempts to delete it, the driver
+# will attempt to delete device every 30 seconds until successful.
+# If the program using the driver exits, the driver will continue attempting
+# to cleanup the next time the driver is used. Deferred deletion permanently
+# deletes the device and all data stored in device will be lost.
+# use_deferred_deletion = "True"
+
+# xfs_nospace_max_retries specifies the maximum number of retries XFS should
+# attempt to complete IO when ENOSPC (no space) error is returned by
+# underlying storage device.
+# xfs_nospace_max_retries = "0"
+#  
+
+
+

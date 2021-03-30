@@ -1,0 +1,187 @@
+Create Local Private Registry with V2 API
+
+# docker search registry
+INDEX       NAME                                           DESCRIPTION                                     STARS     OFFICIAL   AUTOMATED
+docker.io   docker.io/registry                             The Docker Registry 2.0 implementation for...   2940      [OK]       
+docker.io   docker.io/distribution/registry                WARNING: NOT the registry official image!!...   57                   [OK]
+...                                                  0                    
+
+# docker pull registry
+Using default tag: latest
+Trying to pull repository docker.io/library/registry ... 
+latest: Pulling from docker.io/library/registry
+486039affc0a: Pull complete 
+ba51a3b098e6: Pull complete 
+8bb4c43d6c8e: Pull complete 
+6f5f453e5f2d: Pull complete 
+42bc10b72f42: Pull complete 
+Digest: sha256:7d081088e4bfd632a88e3f3bcd9e007ef44a796fddfe3261407a3f9f04abe1e7
+Status: Downloaded newer image for docker.io/registry:latest
+
+# docker search alpine
+INDEX       NAME                                             DESCRIPTION                                     STARS     OFFICIAL   AUTOMATED
+docker.io   docker.io/alpine                                 A minimal Docker image based on Alpine Lin...   6389      [OK]       
+...
+
+# docker pull alpine
+Using default tag: latest
+Trying to pull repository docker.io/library/alpine ... 
+latest: Pulling from docker.io/library/alpine
+cbdbe7a5bc2a: Pull complete 
+Digest: sha256:9a839e63dad54c3a6d1834e29692c8492d93f90c59c978c1ed79109ea4fb9a54
+Status: Downloaded newer image for docker.io/alpine:latest
+
+# docker run -d -p 5000:5000 --restart=always --name myregistry registry
+985cd8a91b74ca1a51d714b9498e1b71cd07865cfdf5ad46dcf5ba4efe235865
+
+# docker container ls
+CONTAINER ID        IMAGE               COMMAND                  CREATED             STATUS              PORTS                    NAMES
+985cd8a91b74        registry            "/entrypoint.sh /e..."   6 seconds ago       Up 6 seconds        0.0.0.0:5000->5000/tcp   myregistry
+
+# ip a
+...
+2: ens33: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc pfifo_fast state UP group default qlen 1000
+    link/ether 00:0c:29:03:84:3d brd ff:ff:ff:ff:ff:ff
+    inet 192.168.1.13/24 brd 192.168.1.255 scope global noprefixroute dynamic ens33
+       valid_lft 79567sec preferred_lft 79567sec
+    inet6 fe80::fbcd:9191:cf63:e1c2/64 scope link noprefixroute 
+       valid_lft forever preferred_lft forever
+
+# vi /etc/hosts
+192.168.1.13 myregistry.mydomain.com myregistry
+
+# ping myregistry
+PING myregistry.mydomain.com (192.168.1.13) 56(84) bytes of data.
+64 bytes from myregistry.mydomain.com (192.168.1.13): icmp_seq=1 ttl=64 time=0.052 ms
+64 bytes from myregistry.mydomain.com (192.168.1.13): icmp_seq=2 ttl=64 time=0.058 ms
+64 bytes from myregistry.mydomain.com (192.168.1.13): icmp_seq=3 ttl=64 time=0.086 ms
+^C
+--- myregistry.mydomain.com ping statistics ---
+3 packets transmitted, 3 received, 0% packet loss, time 2002ms
+rtt min/avg/max/mdev = 0.052/0.065/0.086/0.016 ms
+
+# docker image ls
+REPOSITORY            TAG                 IMAGE ID            CREATED             SIZE
+docker.io/alpine      latest              f70734b6a266        3 days ago          5.61 MB
+centos-dbclient       latest              1d994bf7ca20        4 days ago          366 MB
+docker.io/mariadb     latest              bea3d0aeb501        4 days ago          357 MB
+docker.io/wordpress   latest              895c3d7568db        9 days ago          540 MB
+docker.io/httpd       latest              bdc169d27d36        10 days ago         166 MB
+docker.io/registry    latest              708bc6af7e5e        3 months ago        25.8 MB
+docker.io/centos      latest              470671670cac        3 months ago        237 MB
+
+# docker tag docker.io/alpine localhost:5000/alpine:2.14
+# docker tag docker.io/httpd localhost:5000/myhttpd:latest
+# docker tag docker.io/centos localhost:5000/mycentos
+# docker tag docker.io/wordpress locahost:5000/mywordpress
+# docker tag docker.io/mariadb localhost:5000/mymariadb
+
+# docker tag myapp docker.io/furqanpr/myapp:1.5
+# docker tag myapp quay.io/furqanpr/myapp:1.5
+
+
+
+# docker push localhost:5000/alpine
+The push refers to a repository [localhost:5000/alpine]
+3e207b409db3: Pushed 
+latest: digest: sha256:39eda93d15866957feaee28f8fc5adb545276a64147445c64992ef69804dbf01 size: 528
+
+# docker image ls
+REPOSITORY                              TAG                 IMAGE ID            CREATED             SIZE
+localhost:5000/alpine                   latest              f70734b6a266        3 days ago          5.61 MB
+myregistry.mydomain.com/alpine          latest              f70734b6a266        3 days ago          5.61 MB
+myregistry.mydomain.com:5000/myalpine   latest              f70734b6a266        3 days ago          5.61 MB
+docker.io/alpine                        latest              f70734b6a266        3 days ago          5.61 MB
+docker.io/myalpine                      latest              f70734b6a266        3 days ago          5.61 MB
+centos-dbclient                         latest              1d994bf7ca20        4 days ago          366 MB
+localhost:5000/mymariadb                latest              bea3d0aeb501        4 days ago          357 MB
+docker.io/mariadb                       latest              bea3d0aeb501        4 days ago          357 MB
+docker.io/wordpress                     latest              895c3d7568db        9 days ago          540 MB
+localhost:5000/mywordpress              latest              895c3d7568db        9 days ago          540 MB
+localhost:5000/myhttpd                  latest              bdc169d27d36        10 days ago         166 MB
+docker.io/httpd                         latest              bdc169d27d36        10 days ago         166 MB
+docker.io/registry                      latest              708bc6af7e5e        3 months ago        25.8 MB
+docker.io/centos                        latest              470671670cac        3 months ago        237 MB
+localhost:5000/mycentos                 latest              470671670cac        3 months ago        237 MB
+
+# docker push localhost:5000/mymariadb
+The push refers to a repository [localhost:5000/mymariadb]
+81ce1762dc68: Pushed 
+6d12aa7c6aa3: Pushed 
+1f4cdfd88a5c: Pushed 
+eb02df70333b: Pushed 
+8688c699cb1d: Pushed 
+51126e99b6e7: Pushed 
+f350642e4720: Pushed 
+62a1b133b490: Pushed 
+93de22642fe0: Pushed 
+dc842dc2a2ae: Pushed 
+16542a8fc3be: Pushed 
+6597da2e2e52: Pushed 
+977183d4e999: Pushed 
+c8be1b8f4d60: Pushed 
+latest: digest: sha256:35dc32d26c4b9797a17b0776cfaa304059e0cc064f576d5c5d8c8b5179d94016 size: 3241
+
+# docker push localhost:5000/mywordpress
+The push refers to a repository [localhost:5000/mywordpress]
+33530d21e7ff: Pushed 
+c10d3d348662: Pushed 
+3e2db1a670dd: Pushed 
+b8e6a4031569: Pushed 
+2dee981efcc5: Pushed 
+f3b0d6e122c0: Pushed 
+5672da368931: Pushed 
+31f4b015873e: Pushed 
+af6ef1136090: Pushed 
+ced04cc51b38: Pushed 
+165fdfac8e53: Pushed 
+6b705b8eba71: Pushed 
+1053b5cda7ea: Pushed 
+62becca074d8: Pushed 
+9dd392e10ce2: Pushed 
+d9cec988e2ec: Pushed 
+837bf4bf6e08: Pushed 
+592b460b2eca: Pushed 
+ed43f2c8f58b: Pushed 
+5bc0937ec8f8: Pushed 
+b60e5c3bcef2: Pushed 
+latest: digest: sha256:997d30ed59ba254fc94500e272b6e6f79c8b7820e585cb4579018800ef3ac7b1 size: 4708
+
+# docker push localhost:5000/myhttpd
+The push refers to a repository [localhost:5000/myhttpd]
+9dabb51b1ca2: Pushed 
+4621e8a6d1da: Pushed 
+e728c649bc91: Pushed 
+1a935e59aa8a: Pushed 
+b60e5c3bcef2: Mounted from mywordpress 
+latest: digest: sha256:8f10edef61246c6c142a87304d4ffa68298662ecb619776e4e9817d06ec5f567 size: 1367
+
+# docker push localhost:5000/mycentos
+The push refers to a repository [localhost:5000/mycentos]
+0683de282177: Pushed 
+latest: digest: sha256:9e0c275e0bcb495773b10a18e499985d782810e47b4fce076422acb4bc3da3dd size: 529
+
+# docker image push myregistry.mydomain.com:5000/myalpine
+The push refers to a repository [myregistry.mydomain.com:5000/myalpine]
+Get https://myregistry.mydomain.com:5000/v1/_ping: http: server gave HTTP response to HTTPS client
+
+
+# curl -L http://myregistry.mydomain.com:5000/v2/_catalog
+{"repositories":["alpine","mycentos","myhttpd","mymariadb","mywordpress"]}
+
+# curl -L http://localhost:5000/v2/_catalog
+{"repositories":["alpine","mycentos","myhttpd","mymariadb","mywordpress"]}
+
+# curl -L http://myregistry.mydomain.com:5000/v2/_catalog | python -m json.tool
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100    75  100    75    0     0  10603      0 --:--:-- --:--:-- --:--:-- 12500
+{
+    "repositories": [
+        "alpine",
+        "mycentos",
+        "myhttpd",
+        "mymariadb",
+        "mywordpress"
+    ]
+}

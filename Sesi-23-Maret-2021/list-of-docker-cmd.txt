@@ -1,0 +1,606 @@
+docker app
+
+    docker app
+    docker app bundle
+    docker app completion
+    docker app init
+    docker app inspect
+    docker app install
+    docker app list
+    docker app merge
+    docker app pull
+    docker app push
+    docker app render
+    docker app split
+    docker app status
+    docker app uninstall
+    docker app upgrade
+    docker app validate
+    docker app version
+
+docker attach
+docker build
+docker builder
+
+    docker builder
+    docker builder build
+    docker builder prune
+
+docker buildx
+
+    docker buildx
+    docker buildx bake
+    docker buildx build
+    docker buildx create
+    docker buildx imagetools
+    docker buildx imagetools create
+    docker buildx imagetools inspect
+    docker buildx inspect
+    docker buildx ls
+    docker buildx rm
+    docker buildx stop
+    docker buildx use
+    docker buildx version
+
+docker checkpoint
+
+    docker checkpoint
+    docker checkpoint create
+    docker checkpoint ls
+    docker checkpoint rm
+
+docker cluster
+
+    docker cluster
+    docker cluster backup
+    docker cluster create
+    docker cluster inspect
+    docker cluster ls
+    docker cluster restore
+    docker cluster rm
+    docker cluster update
+    docker cluster version
+
+docker commit
+docker config
+
+    docker config
+    docker config create
+    docker config inspect
+    docker config ls
+    docker config rm
+
+docker container
+
+    docker container
+    docker container attach
+    docker container commit
+    docker container cp
+    docker container create
+    docker container diff
+    docker container exec
+    docker container export
+    docker container inspect
+    docker container kill
+    docker container logs
+    docker container ls
+    docker container pause
+    docker container port
+    docker container prune
+    docker container rename
+    docker container restart
+    docker container rm
+    docker container run
+    docker container start
+    docker container stats
+    docker container stop
+    docker container top
+    docker container unpause
+    docker container update
+    docker container wait
+
+docker context
+
+    docker context
+    docker context create
+    docker context export
+    docker context import
+    docker context inspect
+    docker context ls
+    docker context rm
+    docker context update
+    docker context use
+
+docker cp
+docker create
+docker deploy
+docker diff
+docker events
+docker exec
+docker export
+docker history
+
+docker image
+
+    docker image
+    docker image build
+    docker image history
+    docker image import
+    docker image inspect
+    docker image load
+    docker image ls
+    docker image prune
+    docker image pull
+    docker image push
+    docker image rm
+    docker image save
+    docker image tag
+
+docker images
+docker import
+docker info
+docker inspect
+docker kill
+docker load
+docker login
+docker logout
+docker logs
+docker manifest
+
+    docker manifest
+    docker manifest annotate
+    docker manifest create
+    docker manifest inspect
+    docker manifest push
+
+docker network
+
+    docker network
+    docker network connect
+    docker network create
+    docker network disconnect
+    docker network inspect
+    docker network ls
+    docker network prune
+    docker network rm
+
+docker node
+
+    docker node
+    docker node demote
+    docker node inspect
+    docker node ls
+    docker node promote
+    docker node ps
+    docker node rm
+    docker node update
+
+docker pause
+docker plugin
+
+    docker plugin
+    docker plugin create
+    docker plugin disable
+    docker plugin enable
+    docker plugin inspect
+    docker plugin install
+    docker plugin ls
+    docker plugin rm
+    docker plugin set
+    docker plugin upgrade
+
+docker port
+docker ps
+docker pull
+docker push
+docker registry
+
+    docker registry
+    docker registry events
+    docker registry history
+    docker registry info
+    docker registry inspect
+    docker registry joblogs
+    docker registry ls
+    docker registry rmi
+
+docker rename
+docker restart
+docker rm
+docker rmi
+docker run
+docker save
+docker search
+
+docker secret
+
+    docker secret
+    docker secret create
+    docker secret inspect
+    docker secret ls
+    docker secret rm
+
+docker service
+
+    docker service
+    docker service create
+    docker service inspect
+    docker service logs
+    docker service ls
+    docker service ps
+    docker service rollback
+    docker service rm
+    docker service scale
+    docker service update
+
+docker stack
+
+    docker stack
+    docker stack deploy
+    docker stack ps
+    docker stack rm
+    docker stack services
+
+docker start
+docker stats
+docker stop
+docker swarm
+
+    docker swarm
+    docker swarm ca
+    docker swarm init
+    docker swarm join-token
+    docker swarm join
+    docker swarm leave
+    docker swarm unlock-key
+    docker swarm unlock
+    docker swarm update
+
+docker system
+
+    docker system
+    docker system df
+    docker system events
+    docker system info
+    docker system prune
+
+docker tag
+docker top
+docker trust
+
+    docker trust
+    docker trust inspect
+    docker trust key
+    docker trust key generate
+    docker trust key load
+    docker trust revoke
+    docker trust sign
+    docker trust signer
+    docker trust signer add
+    docker trust signer remove
+
+docker unpause
+docker update
+docker version
+docker volume
+
+    docker volume create
+    docker volume inspect
+    docker volume ls
+    docker volume prune
+    docker volume rm
+
+docker wait
+
+docker-compose
+    docker-compose build
+    docker-compose config
+    docker-compose create
+    docker-compose down
+    docker-compose events
+    docker-compose exec
+    docker-compose help
+    docker-compose kill
+    docker-compose logs
+    docker-compose pause
+    docker-compose port
+    docker-compose ps
+    docker-compose pull
+    docker-compose push
+    docker-compose restart
+    docker-compose rm
+    docker-compose run
+    docker-compose scale
+    docker-compose start
+    docker-compose stop
+    docker-compose top
+    docker-compose unpause
+    docker-compose up
+
+podman
+
+attach Attach to a running container
+
+build Build an image using instructions from Containerfiles
+
+commit Create new image based on the changed container
+
+containers Manage Containers
+
+cp Copy files/folders between a container and the local filesystem
+
+create Create but do not start a container
+
+diff Inspect changes on container’s file systems
+
+events Show podman events
+
+exec Run a process in a running container
+
+export Export container’s filesystem contents as a tar archive
+
+generate Generated structured data
+
+healthcheck Manage Healthcheck
+
+history Show history of a specified image
+
+image Manage images
+
+images List images in local storage
+
+import Import a tarball to create a filesystem image
+
+info Display podman system information
+
+init Initialize one or more containers
+
+inspect Display the configuration of a container or image
+
+kill Kill one or more running containers with a specific signal
+
+load Load an image from container archive
+
+login Login to a container registry
+
+logout Logout of a container registry
+
+logs Fetch the logs of a container
+
+mount Mount a working container’s root filesystem
+
+network Manage Networks
+
+pause Pause all the processes in one or more containers
+
+play Play a pod
+
+pod Manage pods
+
+port List port mappings or a specific mapping for the container
+
+ps List containers
+
+pull Pull an image from a registry
+
+push Push an image to a specified destination
+
+restart Restart one or more containers
+
+rm Remove one or more containers
+
+rmi Removes one or more images from local storage
+
+run Run a command in a new container
+
+save Save image to an archive
+
+search Search registry for image
+
+start Start one or more containers
+
+stats Display a live stream of container resource usage statistics
+
+stop Stop one or more containers
+
+system Manage podman
+
+tag Add an additional name to a local image
+
+top Display the running processes of a container
+
+umount Unmounts working container’s root filesystem
+
+unpause Unpause the processes in one or more containers
+
+unshare Run a command in a modified user namespace
+
+varlink Run varlink interface
+
+version Display the Podman Version Information
+
+volume Manage volumes
+
+wait Block on one or more containers
+
+
+
+------------
+
+attach
+build 
+commit
+containers
+cp
+create
+diff
+events
+exec
+export
+generate
+healthcheck
+history
+image
+images
+import
+info
+init
+inspect
+kill
+load
+login
+logout
+logs
+mount
+network
+pause
+play
+pod
+port
+ps
+pull
+push
+restart
+rm
+rmi
+run
+save
+search
+start
+stats
+stop
+system
+tag
+top
+umount
+unpause
+unshare
+varlink
+version
+volume
+wait
+
+podman  Image
+
+build Build an image using instructions from Containerfiles
+
+exists Check if an image exists in local storage
+
+history Show history of a specified image
+
+import Import a tarball to create a filesystem image
+
+inspect Display the configuration of an image
+
+list List images in local storage
+
+load Load an image from container archive
+
+prune Remove unused images
+
+pull Pull an image from a registry
+
+push Push an image to a specified destination
+
+rm Removes one or more images from local storage
+
+save Save image to an archive
+
+sign Sign an image
+
+tag Add an additional name to a local image
+
+tree Prints layer hierarchy of an image in a tree format
+
+trust Manage container image trust policy
+
+
+
+podman container
+
+attach Attach to a running container
+
+checkpoint Checkpoints one or more containers
+
+cleanup Cleanup network and mountpoints of one or more containers
+
+commit Create new image based on the changed container
+
+cp Copy files/folders between a container and the local filesystem
+
+create Create but do not start a container
+
+diff Inspect changes on container’s file systems
+
+exec Run a process in a running container
+
+exists Check if a container exists in local storage
+
+export Export container’s filesystem contents as a tar archive
+
+init Initialize one or more containers
+
+inspect Display the configuration of a container or image
+
+kill Kill one or more running containers with a specific signal
+
+list List containers
+
+logs Fetch the logs of a container
+
+mount Mount a working container’s root filesystem
+
+pause Pause all the processes in one or more containers
+
+port List port mappings or a specific mapping for the container
+
+restart Restart one or more containers
+
+prune Remove all stopped containers
+
+restore Restores one or more containers from a checkpoint
+
+rm Remove one or more containers
+
+run Run a command in a new container
+
+runlabel Execute the command described by an image label
+
+start Start one or more containers
+
+stats Display a live stream of container resource usage statistics
+
+stop Stop one or more containers
+
+top Display the running processes of a container
+
+umount Unmounts working container’s root filesystem
+
+unpause Unpause the processes in one or more containers
+
+wait Block on one or more containers
+
+
+podman network
+
+create network create
+
+inspect network inspect
+
+ls network list
+
+rm network rm
+
+
+podman volume
+
+create Create a new volume
+
+inspect Display detailed information on one or more volumes
+
+ls List volumes
+
+prune Remove all unused volumes
+
+rm Remove one or more volumes
+

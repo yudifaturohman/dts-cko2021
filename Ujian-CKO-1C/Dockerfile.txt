@@ -1,0 +1,54 @@
+# dockerfile to build image for Myjava-app  8.5
+
+# Add your description here ...
+FROM rhel:7.2
+
+# Add your description here ...
+MAINTAINER "FirstName LastName" "emailaddress@gmail.com"
+
+# Add your description here ...
+RUN yum -y update
+RUN yum -y install sudo openssh-clients telnet unzip java-1.8.0-openjdk-devel
+RUN yum clean all
+
+# Add your description here ...
+RUN echo '%wheel ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers
+RUN sed -i 's/.*requiretty$/Defaults !requiretty/' /etc/sudoers
+
+# Add your description here ...
+RUN useradd -m myjava-app
+RUN echo myjava-app: | chpasswd
+RUN usermod -a -G wheel myjava-app
+
+# Add your description here ...
+RUN mkdir -p /opt/rh
+WORKDIR /opt/rh
+
+# install Myjava-app  8.5.0
+ADD myjava-app-8.5.0.zip /tmp/myjava-app-8.5.0.zip
+RUN unzip /tmp/myjava-app--8.5.0.zip
+
+# Add your description here ...
+ENV Myjava-app_HOME /opt/rh/myjava-app-8.5
+
+# create Myjava-app console user
+RUN $Myjava-app_HOME/bin/add-user.sh admin admin@2016 --silent
+
+# configure Myjava-app
+RUN echo "JAVA_OPTS=\"\$JAVA_OPTS -Dmyjava-app.bind.address=0.0.0.0 -Dmyjava-app.bind.address.management=0.0.0.0\"" >> $Myjava-app_HOME/bin/standalone.conf
+
+# Add your description here ...
+RUN chown -R myjava-app:myjava-app /opt/rh
+
+# Add your description here ...
+EXPOSE 8080 9990 9999
+
+# Add your description here ...
+ENTRYPOINT $Myjava-app_HOME/bin/standalone.sh -c standalone-full-ha.xml
+
+# Add your description here ...
+ADD myapp.war "$Myjava-app_HOME/standalone/deployments/"
+
+# Add your description here ...
+USER myjava-app
+CMD /bin/bash

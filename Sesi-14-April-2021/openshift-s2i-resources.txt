@@ -1,0 +1,836 @@
+Exploring OpenShift Resources
+
+# oc whoami
+system:admin
+
+# oc project
+Using project "php-helloworld" on server "https://student101-master.lab.example.com:8443".
+
+# oc get all
+
+Building Phase:
+
+NAME                          TYPE      FROM      LATEST
+buildconfigs/php-helloworld   Source    Git       2
+
+NAME                      TYPE      FROM          STATUS     STARTED        DURATION
+builds/php-helloworld-1   Source    Git@79043e8   Complete   10 hours ago   1m5s
+builds/php-helloworld-2   Source    Git@79043e8   Complete   10 hours ago   9s
+
+NAME                        READY     STATUS      RESTARTS   AGE
+po/php-helloworld-1-build   0/1       Completed   0          10h
+po/php-helloworld-2-build   0/1       Completed   0          9h
+
+NAME                          DOCKER REPO                                                      TAGS      UPDATED
+imagestreams/php-helloworld   docker-registry.default.svc:5000/php-helloworld/php-helloworld   latest    10 hours ago
+
+Deploying Phase:
+
+NAME                               REVISION   DESIRED   CURRENT   TRIGGERED BY
+deploymentconfigs/php-helloworld   2          3         3         config,image(php-helloworld:latest)
+
+NAME                  DESIRED   CURRENT   READY     AGE
+rc/php-helloworld-1   0         0         0         10h
+rc/php-helloworld-2   3         3         3         9h
+
+NAME                        READY     STATUS      RESTARTS   AGE
+po/php-helloworld-2-kctjq   1/1       Running     0          9h
+po/php-helloworld-2-mng2x   1/1       Running     0          9h
+po/php-helloworld-2-n76rk   1/1       Running     0          9h
+
+NAME                 TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)             AGE
+svc/php-helloworld   ClusterIP   172.30.208.45   <none>        8080/TCP,8443/TCP   10h
+
+
+1. Exploring BuildConfig, Build, Builder Pod, Builder Image Stream & Application Image Stream
+
+# oc get buildconfig
+NAME             TYPE      FROM      LATEST
+php-helloworld   Source    Git       2
+
+# oc get builds/php-helloworld-2 
+
+NAME               TYPE      FROM          STATUS     STARTED        DURATION
+php-helloworld-2   Source    Git@79043e8   Complete   10 hours ago   9s
+
+# oc get builds/php-helloworld-2 -o wide
+
+NAME               TYPE      FROM          STATUS     STARTED        DURATION
+php-helloworld-2   Source    Git@79043e8   Complete   10 hours ago   9s
+
+
+1.1. BuildConfig
+
+# oc get buildconfig php-helloworld -o yaml
+
+apiVersion: v1
+items:
+- apiVersion: build.openshift.io/v1
+  kind: BuildConfig
+  metadata:
+    annotations:
+      openshift.io/generated-by: OpenShiftNewApp
+    creationTimestamp: "2020-07-07T22:37:24Z"
+    labels:
+      app: php-helloworld
+    name: php-helloworld
+    namespace: php-helloworld
+    resourceVersion: "1374801"
+    selfLink: /apis/build.openshift.io/v1/namespaces/php-helloworld/buildconfigs/php-helloworld
+    uid: 6d94d3dc-c0a2-11ea-9a68-52540074ff41
+  spec:
+    failedBuildsHistoryLimit: 5
+    nodeSelector: null
+    output:
+      to:
+        kind: ImageStreamTag
+        name: php-helloworld:latest
+    postCommit: {}
+    resources: {}
+    runPolicy: Serial
+    source:
+      git:
+        uri: https://github.com/liu365/php-helloworld.git
+      type: Git
+    strategy:
+      sourceStrategy:
+        from:
+          kind: ImageStreamTag
+          name: php:5.6
+          namespace: openshift
+      type: Source
+    successfulBuildsHistoryLimit: 5
+    triggers:
+    - github:
+        secret: 1cEewvbDCYXHPrCwsyBj
+      type: GitHub
+    - generic:
+        secret: SdojsIqm5cBGRnaxHMij
+      type: Generic
+    - type: ConfigChange
+    - imageChange:
+        lastTriggeredImageID: registry.access.redhat.com/rhscl/php-56-rhel7@sha256:920c2cf85b5da5d0701898f0ec9ee567473fa4b9af6f3ac5b2b3f863796bbd68
+      type: ImageChange
+  status:
+    lastVersion: 2
+kind: List
+metadata:
+  resourceVersion: ""
+  selfLink: ""
+
+
+1.2. Build
+
+# oc get builds/php-helloworld-1 -o yaml
+
+apiVersion: build.openshift.io/v1
+kind: Build
+metadata:
+  annotations:
+    openshift.io/build-config.name: php-helloworld
+    openshift.io/build.number: "1"
+    openshift.io/build.pod-name: php-helloworld-1-build
+  creationTimestamp: "2020-07-07T22:37:24Z"
+  labels:
+    app: php-helloworld
+    buildconfig: php-helloworld
+    openshift.io/build-config.name: php-helloworld
+    openshift.io/build.start-policy: Serial
+  name: php-helloworld-1
+  namespace: php-helloworld
+  ownerReferences:
+  - apiVersion: build.openshift.io/v1
+    controller: true
+    kind: BuildConfig
+    name: php-helloworld
+    uid: 6d94d3dc-c0a2-11ea-9a68-52540074ff41
+  resourceVersion: "1370456"
+  selfLink: /apis/build.openshift.io/v1/namespaces/php-helloworld/builds/php-helloworld-1
+  uid: 6dad0470-c0a2-11ea-9a68-52540074ff41
+spec:
+  nodeSelector: null
+  output:
+    pushSecret:
+      name: builder-dockercfg-8qm86
+    to:
+      kind: ImageStreamTag
+      name: php-helloworld:latest
+  postCommit: {}
+  resources: {}
+  revision:
+    git:
+      author:
+        email: dan.liu365@outlook.com
+        name: liu365
+      commit: 79043e8e8c812cd7f8d8affeabd5f51b8c656fcb
+      committer:
+        email: dan.liu365@outlook.com
+        name: liu365
+      message: Restore to origin file
+    type: Git
+  serviceAccount: builder
+  source:
+    git:
+      uri: https://github.com/liu365/php-helloworld.git
+    type: Git
+  strategy:
+    sourceStrategy:
+      from:
+        kind: DockerImage
+        name: registry.access.redhat.com/rhscl/php-56-rhel7@sha256:920c2cf85b5da5d0701898f0ec9ee567473fa4b9af6f3ac5b2b3f863796bbd68
+    type: Source
+  triggeredBy:
+  - imageChangeBuild:
+      fromRef:
+        kind: ImageStreamTag
+        name: php:5.6
+        namespace: openshift
+      imageID: registry.access.redhat.com/rhscl/php-56-rhel7@sha256:920c2cf85b5da5d0701898f0ec9ee567473fa4b9af6f3ac5b2b3f863796bbd68
+    message: Image change
+status:
+  completionTimestamp: "2020-07-07T22:38:29Z"
+  config:
+    kind: BuildConfig
+    name: php-helloworld
+    namespace: php-helloworld
+  duration: 65000000000
+  output:
+    to:
+      imageDigest: sha256:e8e905f3b0a4eff1fea3244dca7f9a1d7552828a0dbe14b1e2c2a7a18fabc30b
+  outputDockerImageReference: docker-registry.default.svc:5000/php-helloworld/php-helloworld:latest
+  phase: Complete
+  stages:
+  - durationMilliseconds: 1600
+    name: FetchInputs
+    startTime: "2020-07-07T22:37:27Z"
+    steps:
+    - durationMilliseconds: 1600
+      name: FetchGitSource
+      startTime: "2020-07-07T22:37:27Z"
+  - durationMilliseconds: 83
+    name: CommitContainer
+    startTime: "2020-07-07T22:38:02Z"
+    steps:
+    - durationMilliseconds: 83
+      name: CommitContainer
+      startTime: "2020-07-07T22:38:02Z"
+  - durationMilliseconds: 876
+    name: Assemble
+    startTime: "2020-07-07T22:38:01Z"
+    steps:
+    - durationMilliseconds: 876
+      name: AssembleBuildScripts
+      startTime: "2020-07-07T22:38:01Z"
+  - durationMilliseconds: 25733
+    name: PushImage
+    startTime: "2020-07-07T22:38:02Z"
+    steps:
+    - durationMilliseconds: 25733
+      name: PushImage
+      startTime: "2020-07-07T22:38:02Z"
+  startTimestamp: "2020-07-07T22:37:24Z"
+
+
+1.3. Builder Pod
+
+# oc get pod -o wide |grep build
+
+NAME                     READY     STATUS      RESTARTS   AGE       IP            NODE
+php-helloworld-1-build   0/1       Completed   0          19h       10.128.0.20   student101-master.lab.example.com
+php-helloworld-2-build   0/1       Completed   0          19h       10.128.0.23   student101-master.lab.example.com
+
+
+# oc get pod php-helloworld-1-build -o yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  annotations:
+    openshift.io/build.name: php-helloworld-1
+    openshift.io/scc: privileged
+  creationTimestamp: "2020-07-07T22:37:24Z"
+  labels:
+    openshift.io/build.name: php-helloworld-1
+  name: php-helloworld-1-build
+  namespace: php-helloworld
+  ownerReferences:
+  - apiVersion: build.openshift.io/v1
+    controller: true
+    kind: Build
+    name: php-helloworld-1
+    uid: 6dad0470-c0a2-11ea-9a68-52540074ff41
+  resourceVersion: "1370455"
+  selfLink: /api/v1/namespaces/php-helloworld/pods/php-helloworld-1-build
+  uid: 6db32aad-c0a2-11ea-9a68-52540074ff41
+spec:
+  containers:
+  - args:
+    - --loglevel=0
+    command:
+    - openshift-sti-build
+    env:
+    - name: BUILD
+      value: |
+        {"kind":"Build","apiVersion":"v1","metadata":{"name":"php-helloworld-1","namespace":"php-helloworld","selfLink":"/apis/build.openshift.io/v1/namespaces/php-helloworld/builds/php-helloworld-1","uid":"6dad0470-c0a2-11ea-9a68-52540074ff41","resourceVersion":"1370290","creationTimestamp":"2020-07-07T22:37:24Z","labels":{"app":"php-helloworld","buildconfig":"php-helloworld","openshift.io/build-config.name":"php-helloworld","openshift.io/build.start-policy":"Serial"},"annotations":{"openshift.io/build-config.name":"php-helloworld","openshift.io/build.number":"1"},"ownerReferences":[{"apiVersion":"build.openshift.io/v1","kind":"BuildConfig","name":"php-helloworld","uid":"6d94d3dc-c0a2-11ea-9a68-52540074ff41","controller":true}]},"spec":{"serviceAccount":"builder","source":{"type":"Git","git":{"uri":"https://github.com/liu365/php-helloworld.git"}},"strategy":{"type":"Source","sourceStrategy":{"from":{"kind":"DockerImage","name":"registry.access.redhat.com/rhscl/php-56-rhel7@sha256:920c2cf85b5da5d0701898f0ec9ee567473fa4b9af6f3ac5b2b3f863796bbd68"}}},"output":{"to":{"kind":"DockerImage","name":"docker-registry.default.svc:5000/php-helloworld/php-helloworld:latest"},"pushSecret":{"name":"builder-dockercfg-8qm86"}},"resources":{},"postCommit":{},"nodeSelector":null,"triggeredBy":[{"message":"Image change","imageChangeBuild":{"imageID":"registry.access.redhat.com/rhscl/php-56-rhel7@sha256:920c2cf85b5da5d0701898f0ec9ee567473fa4b9af6f3ac5b2b3f863796bbd68","fromRef":{"kind":"ImageStreamTag","namespace":"openshift","name":"php:5.6"}}}]},"status":{"phase":"New","outputDockerImageReference":"docker-registry.default.svc:5000/php-helloworld/php-helloworld:latest","config":{"kind":"BuildConfig","namespace":"php-helloworld","name":"php-helloworld"},"output":{}}}
+    - name: SOURCE_REPOSITORY
+      value: https://github.com/liu365/php-helloworld.git
+    - name: SOURCE_URI
+      value: https://github.com/liu365/php-helloworld.git
+    - name: ORIGIN_VERSION
+      value: v3.9.102
+    - name: ALLOWED_UIDS
+      value: 1-
+    - name: DROP_CAPS
+      value: KILL,MKNOD,SETGID,SETUID
+    - name: PUSH_DOCKERCFG_PATH
+      value: /var/run/secrets/openshift.io/push
+    image: openshift3/ose-sti-builder:v3.9.102
+    imagePullPolicy: IfNotPresent
+    name: sti-build
+    resources: {}
+    securityContext:
+      privileged: true
+    terminationMessagePath: /dev/termination-log
+    terminationMessagePolicy: FallbackToLogsOnError
+    volumeMounts:
+    - mountPath: /tmp/build
+      name: buildworkdir
+    - mountPath: /var/run/docker.sock
+      name: docker-socket
+    - mountPath: /var/run/crio/crio.sock
+      name: crio-socket
+    - mountPath: /var/run/secrets/openshift.io/push
+      name: builder-dockercfg-8qm86-push
+      readOnly: true
+    - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+      name: builder-token-55bbw
+      readOnly: true
+  dnsPolicy: ClusterFirst
+  imagePullSecrets:
+  - name: builder-dockercfg-8qm86
+  initContainers:
+  - args:
+    - --loglevel=0
+    command:
+    - openshift-git-clone
+    env:
+    - name: BUILD
+      value: |
+        {"kind":"Build","apiVersion":"v1","metadata":{"name":"php-helloworld-1","namespace":"php-helloworld","selfLink":"/apis/build.openshift.io/v1/namespaces/php-helloworld/builds/php-helloworld-1","uid":"6dad0470-c0a2-11ea-9a68-52540074ff41","resourceVersion":"1370290","creationTimestamp":"2020-07-07T22:37:24Z","labels":{"app":"php-helloworld","buildconfig":"php-helloworld","openshift.io/build-config.name":"php-helloworld","openshift.io/build.start-policy":"Serial"},"annotations":{"openshift.io/build-config.name":"php-helloworld","openshift.io/build.number":"1"},"ownerReferences":[{"apiVersion":"build.openshift.io/v1","kind":"BuildConfig","name":"php-helloworld","uid":"6d94d3dc-c0a2-11ea-9a68-52540074ff41","controller":true}]},"spec":{"serviceAccount":"builder","source":{"type":"Git","git":{"uri":"https://github.com/liu365/php-helloworld.git"}},"strategy":{"type":"Source","sourceStrategy":{"from":{"kind":"DockerImage","name":"registry.access.redhat.com/rhscl/php-56-rhel7@sha256:920c2cf85b5da5d0701898f0ec9ee567473fa4b9af6f3ac5b2b3f863796bbd68"}}},"output":{"to":{"kind":"DockerImage","name":"docker-registry.default.svc:5000/php-helloworld/php-helloworld:latest"},"pushSecret":{"name":"builder-dockercfg-8qm86"}},"resources":{},"postCommit":{},"nodeSelector":null,"triggeredBy":[{"message":"Image change","imageChangeBuild":{"imageID":"registry.access.redhat.com/rhscl/php-56-rhel7@sha256:920c2cf85b5da5d0701898f0ec9ee567473fa4b9af6f3ac5b2b3f863796bbd68","fromRef":{"kind":"ImageStreamTag","namespace":"openshift","name":"php:5.6"}}}]},"status":{"phase":"New","outputDockerImageReference":"docker-registry.default.svc:5000/php-helloworld/php-helloworld:latest","config":{"kind":"BuildConfig","namespace":"php-helloworld","name":"php-helloworld"},"output":{}}}
+    - name: SOURCE_REPOSITORY
+      value: https://github.com/liu365/php-helloworld.git
+    - name: SOURCE_URI
+      value: https://github.com/liu365/php-helloworld.git
+    - name: ORIGIN_VERSION
+      value: v3.9.102
+    - name: ALLOWED_UIDS
+      value: 1-
+    - name: DROP_CAPS
+      value: KILL,MKNOD,SETGID,SETUID
+    image: openshift3/ose-sti-builder:v3.9.102
+    imagePullPolicy: IfNotPresent
+    name: git-clone
+    resources: {}
+    terminationMessagePath: /dev/termination-log
+    terminationMessagePolicy: FallbackToLogsOnError
+    volumeMounts:
+    - mountPath: /tmp/build
+      name: buildworkdir
+    - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+      name: builder-token-55bbw
+      readOnly: true
+  - args:
+    - --loglevel=0
+    command:
+    - openshift-manage-dockerfile
+    env:
+    - name: BUILD
+      value: |
+        {"kind":"Build","apiVersion":"v1","metadata":{"name":"php-helloworld-1","namespace":"php-helloworld","selfLink":"/apis/build.openshift.io/v1/namespaces/php-helloworld/builds/php-helloworld-1","uid":"6dad0470-c0a2-11ea-9a68-52540074ff41","resourceVersion":"1370290","creationTimestamp":"2020-07-07T22:37:24Z","labels":{"app":"php-helloworld","buildconfig":"php-helloworld","openshift.io/build-config.name":"php-helloworld","openshift.io/build.start-policy":"Serial"},"annotations":{"openshift.io/build-config.name":"php-helloworld","openshift.io/build.number":"1"},"ownerReferences":[{"apiVersion":"build.openshift.io/v1","kind":"BuildConfig","name":"php-helloworld","uid":"6d94d3dc-c0a2-11ea-9a68-52540074ff41","controller":true}]},"spec":{"serviceAccount":"builder","source":{"type":"Git","git":{"uri":"https://github.com/liu365/php-helloworld.git"}},"strategy":{"type":"Source","sourceStrategy":{"from":{"kind":"DockerImage","name":"registry.access.redhat.com/rhscl/php-56-rhel7@sha256:920c2cf85b5da5d0701898f0ec9ee567473fa4b9af6f3ac5b2b3f863796bbd68"}}},"output":{"to":{"kind":"DockerImage","name":"docker-registry.default.svc:5000/php-helloworld/php-helloworld:latest"},"pushSecret":{"name":"builder-dockercfg-8qm86"}},"resources":{},"postCommit":{},"nodeSelector":null,"triggeredBy":[{"message":"Image change","imageChangeBuild":{"imageID":"registry.access.redhat.com/rhscl/php-56-rhel7@sha256:920c2cf85b5da5d0701898f0ec9ee567473fa4b9af6f3ac5b2b3f863796bbd68","fromRef":{"kind":"ImageStreamTag","namespace":"openshift","name":"php:5.6"}}}]},"status":{"phase":"New","outputDockerImageReference":"docker-registry.default.svc:5000/php-helloworld/php-helloworld:latest","config":{"kind":"BuildConfig","namespace":"php-helloworld","name":"php-helloworld"},"output":{}}}
+    - name: SOURCE_REPOSITORY
+      value: https://github.com/liu365/php-helloworld.git
+    - name: SOURCE_URI
+      value: https://github.com/liu365/php-helloworld.git
+    - name: ORIGIN_VERSION
+      value: v3.9.102
+    - name: ALLOWED_UIDS
+      value: 1-
+    - name: DROP_CAPS
+      value: KILL,MKNOD,SETGID,SETUID
+    image: openshift3/ose-sti-builder:v3.9.102
+    imagePullPolicy: IfNotPresent
+    name: manage-dockerfile
+    resources: {}
+    terminationMessagePath: /dev/termination-log
+    terminationMessagePolicy: FallbackToLogsOnError
+    volumeMounts:
+    - mountPath: /tmp/build
+      name: buildworkdir
+    - mountPath: /var/run/secrets/kubernetes.io/serviceaccount
+      name: builder-token-55bbw
+      readOnly: true
+  nodeName: student101-master.lab.example.com
+  nodeSelector:
+    node-role.kubernetes.io/compute: "true"
+  restartPolicy: Never
+  schedulerName: default-scheduler
+  securityContext: {}
+  serviceAccount: builder
+  serviceAccountName: builder
+  terminationGracePeriodSeconds: 30
+  volumes:
+  - emptyDir: {}
+    name: buildworkdir
+  - hostPath:
+      path: /var/run/docker.sock
+      type: ""
+    name: docker-socket
+  - hostPath:
+      path: /var/run/crio/crio.sock
+      type: ""
+    name: crio-socket
+  - name: builder-dockercfg-8qm86-push
+    secret:
+      defaultMode: 384
+      secretName: builder-dockercfg-8qm86
+  - name: builder-token-55bbw
+    secret:
+      defaultMode: 420
+      secretName: builder-token-55bbw
+status:
+  conditions:
+  - lastProbeTime: null
+    lastTransitionTime: "2020-07-07T22:37:31Z"
+    reason: PodCompleted
+    status: "True"
+    type: Initialized
+  - lastProbeTime: null
+    lastTransitionTime: "2020-07-07T22:38:29Z"
+    reason: PodCompleted
+    status: "False"
+    type: Ready
+  - lastProbeTime: null
+    lastTransitionTime: "2020-07-07T22:37:24Z"
+    status: "True"
+    type: PodScheduled
+  containerStatuses:
+  - containerID: docker://3f34aae8931c8f059ff6df535e59796bfbfd94208f85d402db4885c5bb53e24b
+    image: registry.access.redhat.com/openshift3/ose-sti-builder:v3.9.102
+    imageID: docker-pullable://registry.access.redhat.com/openshift3/ose-sti-builder@sha256:bec9f1dbbc23de1c4803f9908c70852bc44f54b905965de428bfcddf4024f5be
+    lastState: {}
+    name: sti-build
+    ready: false
+    restartCount: 0
+    state:
+      terminated:
+        containerID: docker://3f34aae8931c8f059ff6df535e59796bfbfd94208f85d402db4885c5bb53e24b
+        exitCode: 0
+        finishedAt: "2020-07-07T22:38:28Z"
+        reason: Completed
+        startedAt: "2020-07-07T22:37:31Z"
+  hostIP: 10.10.101.100
+  initContainerStatuses:
+  - containerID: docker://33d0fb57436cdd08e7045be7eeb3930f5437cc39ae70500f704e71df1b9dfe6f
+    image: registry.access.redhat.com/openshift3/ose-sti-builder:v3.9.102
+    imageID: docker-pullable://registry.access.redhat.com/openshift3/ose-sti-builder@sha256:bec9f1dbbc23de1c4803f9908c70852bc44f54b905965de428bfcddf4024f5be
+    lastState: {}
+    name: git-clone
+    ready: true
+    restartCount: 0
+    state:
+      terminated:
+        containerID: docker://33d0fb57436cdd08e7045be7eeb3930f5437cc39ae70500f704e71df1b9dfe6f
+        exitCode: 0
+        finishedAt: "2020-07-07T22:37:29Z"
+        reason: Completed
+        startedAt: "2020-07-07T22:37:26Z"
+  - containerID: docker://83e57c1b05fadd14a5ec332f06e9c926cff5ed97ff6fd876e4ea22a14ff18068
+    image: registry.access.redhat.com/openshift3/ose-sti-builder:v3.9.102
+    imageID: docker-pullable://registry.access.redhat.com/openshift3/ose-sti-builder@sha256:bec9f1dbbc23de1c4803f9908c70852bc44f54b905965de428bfcddf4024f5be
+    lastState: {}
+    name: manage-dockerfile
+    ready: true
+    restartCount: 0
+    state:
+      terminated:
+        containerID: docker://83e57c1b05fadd14a5ec332f06e9c926cff5ed97ff6fd876e4ea22a14ff18068
+        exitCode: 0
+        finishedAt: "2020-07-07T22:37:31Z"
+        reason: Completed
+        startedAt: "2020-07-07T22:37:30Z"
+  phase: Succeeded
+  podIP: 10.128.0.20
+  qosClass: BestEffort
+  startTime: "2020-07-07T22:37:24Z"
+
+
+1.4. Builder Image Stream
+
+# oc get is -n openshift | grep php
+php                                   docker-registry.default.svc:5000/openshift/php                                   5.6,7.0,7.1 + 2 more...       9 days ago
+
+# oc get is php -n openshift -o yaml
+
+apiVersion: image.openshift.io/v1
+kind: ImageStream
+metadata:
+  annotations:
+    openshift.io/display-name: PHP
+    openshift.io/image.dockerRepositoryCheck: "2020-06-29T09:22:10Z"
+  creationTimestamp: "2020-06-29T09:22:02Z"
+  generation: 2
+  name: php
+  namespace: openshift
+  resourceVersion: "947"
+  selfLink: /apis/image.openshift.io/v1/namespaces/openshift/imagestreams/php
+  uid: fe1adba0-b9e9-11ea-9a68-52540074ff41
+spec:
+  lookupPolicy:
+    local: false
+  tags:
+  - annotations:
+      description: Build and run PHP 5.5 applications on RHEL 7. For more information
+        about using this builder image, including OpenShift considerations, see https://github.com/sclorg/s2i-php-container/blob/master/5.5/README.md.
+      iconClass: icon-php
+      openshift.io/display-name: PHP 5.5
+      openshift.io/provider-display-name: Red Hat, Inc.
+      sampleRepo: https://github.com/openshift/cakephp-ex.git
+      supports: php:5.5,php
+      tags: hidden,builder,php
+      version: "5.5"
+    from:
+      kind: DockerImage
+      name: registry.access.redhat.com/openshift3/php-55-rhel7:latest
+    generation: 2
+    importPolicy: {}
+    name: "5.5"
+    referencePolicy:
+      type: Source
+  - annotations:
+      description: Build and run PHP 5.6 applications on RHEL 7. For more information
+        about using this builder image, including OpenShift considerations, see https://github.com/sclorg/s2i-php-container/blob/master/5.6/README.md.
+      iconClass: icon-php
+      openshift.io/display-name: PHP 5.6
+      openshift.io/provider-display-name: Red Hat, Inc.
+      sampleRepo: https://github.com/openshift/cakephp-ex.git
+      supports: php:5.6,php
+      tags: builder,php
+      version: "5.6"
+    from:
+      kind: DockerImage
+      name: registry.access.redhat.com/rhscl/php-56-rhel7:latest
+    generation: 2
+    importPolicy: {}
+    name: "5.6"
+    referencePolicy:
+      type: Source
+  - annotations:
+      description: Build and run PHP 7.0 applications on RHEL 7. For more information
+        about using this builder image, including OpenShift considerations, see https://github.com/sclorg/s2i-php-container/blob/master/7.0/README.md.
+      iconClass: icon-php
+      openshift.io/display-name: PHP 7.0
+      openshift.io/provider-display-name: Red Hat, Inc.
+      sampleRepo: https://github.com/openshift/cakephp-ex.git
+      supports: php:7.0,php
+      tags: builder,php
+      version: "7.0"
+    from:
+      kind: DockerImage
+      name: registry.access.redhat.com/rhscl/php-70-rhel7:latest
+    generation: 2
+    importPolicy: {}
+    name: "7.0"
+    referencePolicy:
+      type: Source
+  - annotations:
+      description: Build and run PHP 7.1 applications on RHEL 7. For more information
+        about using this builder image, including OpenShift considerations, see https://github.com/sclorg/s2i-php-container/blob/master/7.1/README.md.
+      iconClass: icon-php
+      openshift.io/display-name: PHP 7.1
+      openshift.io/provider-display-name: Red Hat, Inc.
+      sampleRepo: https://github.com/openshift/cakephp-ex.git
+      supports: php:7.1,php
+      tags: builder,php
+      version: "7.1"
+    from:
+      kind: DockerImage
+      name: registry.access.redhat.com/rhscl/php-71-rhel7:latest
+    generation: 2
+    importPolicy: {}
+    name: "7.1"
+    referencePolicy:
+      type: Source
+  - annotations:
+      description: |-
+        Build and run PHP applications on RHEL 7. For more information about using this builder image, including OpenShift considerations, see https://github.com/sclorg/s2i-php-container/blob/master/7.1/README.md.
+
+        WARNING: By selecting this tag, your application will automatically update to use the latest version of PHP available on OpenShift, including major versions updates.
+      iconClass: icon-php
+      openshift.io/display-name: PHP (Latest)
+      openshift.io/provider-display-name: Red Hat, Inc.
+      sampleRepo: https://github.com/openshift/cakephp-ex.git
+      supports: php
+      tags: builder,php
+    from:
+      kind: ImageStreamTag
+      name: "7.1"
+    generation: 1
+    importPolicy: {}
+    name: latest
+    referencePolicy:
+      type: Source
+status:
+  dockerImageRepository: docker-registry.default.svc:5000/openshift/php
+  tags:
+  - items:
+    - created: "2020-06-29T09:22:10Z"
+      dockerImageReference: registry.access.redhat.com/openshift3/php-55-rhel7@sha256:c82d399564d21b9737ac58c1c812c31c42b4afc94443a8e276cd63979dde2930
+      generation: 2
+      image: sha256:c82d399564d21b9737ac58c1c812c31c42b4afc94443a8e276cd63979dde2930
+    tag: "5.5"
+  - items:
+    - created: "2020-06-29T09:22:10Z"
+      dockerImageReference: registry.access.redhat.com/rhscl/php-56-rhel7@sha256:920c2cf85b5da5d0701898f0ec9ee567473fa4b9af6f3ac5b2b3f863796bbd68
+      generation: 2
+      image: sha256:920c2cf85b5da5d0701898f0ec9ee567473fa4b9af6f3ac5b2b3f863796bbd68
+    tag: "5.6"
+  - items:
+    - created: "2020-06-29T09:22:10Z"
+      dockerImageReference: registry.access.redhat.com/rhscl/php-70-rhel7@sha256:5fe71824f8cd33e087a8345dae0d50d246d3032b179ccfbc21a2d2aaea24e2dc
+      generation: 2
+      image: sha256:5fe71824f8cd33e087a8345dae0d50d246d3032b179ccfbc21a2d2aaea24e2dc
+    tag: "7.0"
+  - items:
+    - created: "2020-06-29T09:22:10Z"
+      dockerImageReference: registry.access.redhat.com/rhscl/php-71-rhel7@sha256:289ef5852151a1a3ea4fdf2581a86a60ada0719e54a5ddd78f5252742e6d2b8d
+      generation: 2
+      image: sha256:289ef5852151a1a3ea4fdf2581a86a60ada0719e54a5ddd78f5252742e6d2b8d
+    tag: "7.1"
+  - items:
+    - created: "2020-06-29T09:22:10Z"
+      dockerImageReference: registry.access.redhat.com/rhscl/php-71-rhel7@sha256:289ef5852151a1a3ea4fdf2581a86a60ada0719e54a5ddd78f5252742e6d2b8d
+      generation: 2
+      image: sha256:289ef5852151a1a3ea4fdf2581a86a60ada0719e54a5ddd78f5252742e6d2b8d
+    tag: latest
+
+
+1.5. Application Image Stream
+
+# oc get is
+NAME             DOCKER REPO                                                      TAGS      UPDATED
+php-helloworld   docker-registry.default.svc:5000/php-helloworld/php-helloworld   latest    19 hours ago
+
+# oc get is -o wide
+NAME             DOCKER REPO                                                      TAGS      UPDATED
+php-helloworld   docker-registry.default.svc:5000/php-helloworld/php-helloworld   latest    19 hours ago
+
+# oc get is php-helloworld -o yaml
+apiVersion: image.openshift.io/v1
+kind: ImageStream
+metadata:
+  annotations:
+    openshift.io/generated-by: OpenShiftNewApp
+  creationTimestamp: "2020-07-07T22:37:24Z"
+  generation: 1
+  labels:
+    app: php-helloworld
+  name: php-helloworld
+  namespace: php-helloworld
+  resourceVersion: "1374845"
+  selfLink: /apis/image.openshift.io/v1/namespaces/php-helloworld/imagestreams/php-helloworld
+  uid: 6d90e72d-c0a2-11ea-9a68-52540074ff41
+spec:
+  lookupPolicy:
+    local: false
+status:
+  dockerImageRepository: docker-registry.default.svc:5000/php-helloworld/php-helloworld
+  tags:
+  - items:
+    - created: "2020-07-07T23:17:00Z"
+      dockerImageReference: docker-registry.default.svc:5000/php-helloworld/php-helloworld@sha256:e9ae863081fe29177d9e195cb5153c2acc2285c1ba6072a9ec76e831812a9e66
+      generation: 1
+      image: sha256:e9ae863081fe29177d9e195cb5153c2acc2285c1ba6072a9ec76e831812a9e66
+    - created: "2020-07-07T22:38:28Z"
+      dockerImageReference: docker-registry.default.svc:5000/php-helloworld/php-helloworld@sha256:e8e905f3b0a4eff1fea3244dca7f9a1d7552828a0dbe14b1e2c2a7a18fabc30b
+      generation: 1
+      image: sha256:e8e905f3b0a4eff1fea3244dca7f9a1d7552828a0dbe14b1e2c2a7a18fabc30b
+    tag: latest
+
+
+2. Exploring DeploymentConfig
+
+# oc get deploymentconfigs/php-helloworld -o yaml
+
+apiVersion: apps.openshift.io/v1
+kind: DeploymentConfig
+metadata:
+  annotations:
+    openshift.io/generated-by: OpenShiftNewApp
+  creationTimestamp: "2020-07-07T22:37:24Z"
+  generation: 4
+  labels:
+    app: php-helloworld
+  name: php-helloworld
+  namespace: php-helloworld
+  resourceVersion: "1375973"
+  selfLink: /apis/apps.openshift.io/v1/namespaces/php-helloworld/deploymentconfigs/php-helloworld
+  uid: 6d985a34-c0a2-11ea-9a68-52540074ff41
+spec:
+  replicas: 3
+  revisionHistoryLimit: 10
+  selector:
+    app: php-helloworld
+    deploymentconfig: php-helloworld
+  strategy:
+    activeDeadlineSeconds: 21600
+    resources: {}
+    rollingParams:
+      intervalSeconds: 1
+      maxSurge: 25%
+      maxUnavailable: 25%
+      timeoutSeconds: 600
+      updatePeriodSeconds: 1
+    type: Rolling
+  template:
+    metadata:
+      annotations:
+        openshift.io/generated-by: OpenShiftNewApp
+      creationTimestamp: null
+      labels:
+        app: php-helloworld
+        deploymentconfig: php-helloworld
+    spec:
+      containers:
+      - image: docker-registry.default.svc:5000/php-helloworld/php-helloworld@sha256:e9ae863081fe29177d9e195cb5153c2acc2285c1ba6072a9ec76e831812a9e66
+        imagePullPolicy: Always
+        name: php-helloworld
+        ports:
+        - containerPort: 8080
+          protocol: TCP
+        - containerPort: 8443
+          protocol: TCP
+        resources: {}
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+  test: false
+  triggers:
+  - type: ConfigChange
+  - imageChangeParams:
+      automatic: true
+      containerNames:
+      - php-helloworld
+      from:
+        kind: ImageStreamTag
+        name: php-helloworld:latest
+        namespace: php-helloworld
+      lastTriggeredImage: docker-registry.default.svc:5000/php-helloworld/php-helloworld@sha256:e9ae863081fe29177d9e195cb5153c2acc2285c1ba6072a9ec76e831812a9e66
+    type: ImageChange
+status:
+  availableReplicas: 3
+  conditions:
+  - lastTransitionTime: "2020-07-07T23:17:07Z"
+    lastUpdateTime: "2020-07-07T23:17:09Z"
+    message: replication controller "php-helloworld-2" successfully rolled out
+    reason: NewReplicationControllerAvailable
+    status: "True"
+    type: Progressing
+  - lastTransitionTime: "2020-07-07T23:26:12Z"
+    lastUpdateTime: "2020-07-07T23:26:12Z"
+    message: Deployment config has minimum availability.
+    status: "True"
+    type: Available
+  details:
+    causes:
+    - imageTrigger:
+        from:
+          kind: DockerImage
+          name: docker-registry.default.svc:5000/php-helloworld/php-helloworld@sha256:e9ae863081fe29177d9e195cb5153c2acc2285c1ba6072a9ec76e831812a9e66
+      type: ImageChange
+    message: image change
+  latestVersion: 2
+  observedGeneration: 4
+  readyReplicas: 3
+  replicas: 3
+  unavailableReplicas: 0
+  updatedReplicas: 3
+ 
+
+# oc get rc/php-helloworld-2 -o yaml
+apiVersion: v1
+
+kind: ReplicationController
+metadata:
+  annotations:
+    openshift.io/deployer-pod.completed-at: 2020-07-07 19:17:08 -0400 EDT
+    openshift.io/deployer-pod.created-at: 2020-07-07 19:17:00 -0400 EDT
+    openshift.io/deployer-pod.name: php-helloworld-2-deploy
+    openshift.io/deployment-config.latest-version: "2"
+    openshift.io/deployment-config.name: php-helloworld
+    openshift.io/deployment.phase: Complete
+    openshift.io/deployment.replicas: ""
+    openshift.io/deployment.status-reason: image change
+    openshift.io/encoded-deployment-config: |
+      {"kind":"DeploymentConfig","apiVersion":"v1","metadata":{"name":"php-helloworld","namespace":"php-helloworld","selfLink":"/apis/apps.openshift.io/v1/namespaces/php-helloworld/deploymentconfigs/php-helloworld","uid":"6d985a34-c0a2-11ea-9a68-52540074ff41","resourceVersion":"1374847","generation":3,"creationTimestamp":"2020-07-07T22:37:24Z","labels":{"app":"php-helloworld"},"annotations":{"openshift.io/generated-by":"OpenShiftNewApp"}},"spec":{"strategy":{"type":"Rolling","rollingParams":{"updatePeriodSeconds":1,"intervalSeconds":1,"timeoutSeconds":600,"maxUnavailable":"25%","maxSurge":"25%"},"resources":{},"activeDeadlineSeconds":21600},"triggers":[{"type":"ConfigChange"},{"type":"ImageChange","imageChangeParams":{"automatic":true,"containerNames":["php-helloworld"],"from":{"kind":"ImageStreamTag","namespace":"php-helloworld","name":"php-helloworld:latest"},"lastTriggeredImage":"docker-registry.default.svc:5000/php-helloworld/php-helloworld@sha256:e9ae863081fe29177d9e195cb5153c2acc2285c1ba6072a9ec76e831812a9e66"}}],"replicas":1,"revisionHistoryLimit":10,"test":false,"selector":{"app":"php-helloworld","deploymentconfig":"php-helloworld"},"template":{"metadata":{"creationTimestamp":null,"labels":{"app":"php-helloworld","deploymentconfig":"php-helloworld"},"annotations":{"openshift.io/generated-by":"OpenShiftNewApp"}},"spec":{"containers":[{"name":"php-helloworld","image":"docker-registry.default.svc:5000/php-helloworld/php-helloworld@sha256:e9ae863081fe29177d9e195cb5153c2acc2285c1ba6072a9ec76e831812a9e66","ports":[{"containerPort":8080,"protocol":"TCP"},{"containerPort":8443,"protocol":"TCP"}],"resources":{},"terminationMessagePath":"/dev/termination-log","terminationMessagePolicy":"File","imagePullPolicy":"Always"}],"restartPolicy":"Always","terminationGracePeriodSeconds":30,"dnsPolicy":"ClusterFirst","securityContext":{},"schedulerName":"default-scheduler"}}},"status":{"latestVersion":2,"observedGeneration":2,"replicas":1,"updatedReplicas":1,"availableReplicas":1,"unavailableReplicas":0,"details":{"message":"image change","causes":[{"type":"ImageChange","imageTrigger":{"from":{"kind":"DockerImage","name":"docker-registry.default.svc:5000/php-helloworld/php-helloworld@sha256:e9ae863081fe29177d9e195cb5153c2acc2285c1ba6072a9ec76e831812a9e66"}}}]},"conditions":[{"type":"Available","status":"True","lastUpdateTime":"2020-07-07T22:38:33Z","lastTransitionTime":"2020-07-07T22:38:33Z","message":"Deployment config has minimum availability."},{"type":"Progressing","status":"True","lastUpdateTime":"2020-07-07T22:38:34Z","lastTransitionTime":"2020-07-07T22:38:30Z","reason":"NewReplicationControllerAvailable","message":"replication controller \"php-helloworld-1\" successfully rolled out"}],"readyReplicas":1}}
+  creationTimestamp: "2020-07-07T23:17:00Z"
+  generation: 3
+  labels:
+    app: php-helloworld
+    openshift.io/deployment-config.name: php-helloworld
+  name: php-helloworld-2
+  namespace: php-helloworld
+  ownerReferences:
+  - apiVersion: apps.openshift.io/v1
+    blockOwnerDeletion: true
+    controller: true
+    kind: DeploymentConfig
+    name: php-helloworld
+    uid: 6d985a34-c0a2-11ea-9a68-52540074ff41
+  resourceVersion: "1375972"
+  selfLink: /api/v1/namespaces/php-helloworld/replicationcontrollers/php-helloworld-2
+  uid: f61cad23-c0a7-11ea-9a68-52540074ff41
+spec:
+  replicas: 3
+  selector:
+    app: php-helloworld
+    deployment: php-helloworld-2
+    deploymentconfig: php-helloworld
+  template:
+    metadata:
+      annotations:
+        openshift.io/deployment-config.latest-version: "2"
+        openshift.io/deployment-config.name: php-helloworld
+        openshift.io/deployment.name: php-helloworld-2
+        openshift.io/generated-by: OpenShiftNewApp
+      creationTimestamp: null
+      labels:
+        app: php-helloworld
+        deployment: php-helloworld-2
+        deploymentconfig: php-helloworld
+    spec:
+      containers:
+      - image: docker-registry.default.svc:5000/php-helloworld/php-helloworld@sha256:e9ae863081fe29177d9e195cb5153c2acc2285c1ba6072a9ec76e831812a9e66
+        imagePullPolicy: Always
+        name: php-helloworld
+        ports:
+        - containerPort: 8080
+          protocol: TCP
+        - containerPort: 8443
+          protocol: TCP
+        resources: {}
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+status:
+  availableReplicas: 3
+  fullyLabeledReplicas: 3
+  observedGeneration: 3
+  readyReplicas: 3
+  replicas: 3
